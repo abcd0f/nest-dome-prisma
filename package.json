@@ -1,5 +1,5 @@
 {
-  "name": "aaa",
+  "name": "app",
   "version": "0.0.1",
   "description": "",
   "author": "",
@@ -25,8 +25,6 @@
     "@nestjs/mapped-types": "*",
     "@nestjs/platform-express": "^11.0.1",
     "@prisma/client": "^6.15.0",
-    "class-transformer": "^0.5.1",
-    "class-validator": "^0.14.2",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1"
   },
