@@ -2,11 +2,13 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 
 import { CustomValidationPipe } from '@/common/pipes';
-import { ResponseInterceptor } from '@/common/interceptors';
+import { ResponseInterceptor, CustomLogger } from '@/common/interceptors';
 import { getLocalIP } from '@/utils/getLocalIP';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: new CustomLogger(),
+  });
 
   app.useGlobalPipes(new CustomValidationPipe());
   app.useGlobalInterceptors(new ResponseInterceptor());
