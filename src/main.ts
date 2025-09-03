@@ -7,13 +7,7 @@ import { getLocalIP } from '@/utils/getLocalIP';
 import { getCorsOption } from '@/config/cors';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
-    // logger: new CustomLogger({
-    //   level: 'info',
-    //   logDir: 'logs',
-    //   enableConsole: true,
-    // }),
-  });
+  const app = await NestFactory.create(AppModule);
 
   app.useGlobalPipes(new CustomValidationPipe());
   app.useGlobalInterceptors(new ResponseInterceptor());
