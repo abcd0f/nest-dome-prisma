@@ -12,9 +12,12 @@ datasource db {
 
 /// 用户
 model List {
+  /// 自增主键
   id    Int     @id @default(autoincrement())
+  /// 邮箱
   email String  @unique
-  name  String? /// 昵称
+  /// 昵称
+  name  String?
 
   @@map("list")
 }
