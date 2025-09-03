@@ -4,17 +4,19 @@ import { AppModule } from './app.module';
 
 import { CustomValidationPipe } from '@/common/pipes';
 import { ResponseInterceptor, CustomLogger } from '@/common/interceptors';
-import { getLocalIP } from '@/utils/getLocalIP';
-import { getCorsOption } from '@/utils/cors';
+import { getLocalIP } from '@/utils/localip.utils';
+import { getCorsOption } from '@/utils/cors.utils';
+
+import type { ConfigKeyPaths } from './config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  const config = app.get(ConfigService);
+  const config = app.get(ConfigService<ConfigKeyPaths>);
+
+  const { port, prefix } = config.get('app');
 
   // 设置 api 访问前缀
-  const prefix = config.get('API_PREFIX');
-  const port = config.get('APP_PORT') || 3000;
   app.setGlobalPrefix(prefix);
 
   app.useGlobalPipes(new CustomValidationPipe());
