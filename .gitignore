@@ -5,6 +5,7 @@
 /prisma/generated
 /log
 /logs
+/public/upload
 
 # Logs
 logs

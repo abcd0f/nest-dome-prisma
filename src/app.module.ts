@@ -8,6 +8,8 @@ import { SharedModule } from '@/shared/shared.module';
 
 import { ListModule } from './modules/list/list.module';
 
+import { ToolsModule } from './modules/tools/tools.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -19,6 +21,7 @@ import { ListModule } from './modules/list/list.module';
     }),
     SharedModule,
     ListModule,
+    ToolsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
