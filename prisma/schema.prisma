@@ -10,14 +10,63 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-/// 用户
+/// List 表
 model List {
   /// 自增主键
-  id    Int     @id @default(autoincrement())
-  /// 邮箱
-  email String  @unique
-  /// 昵称
-  name  String?
+  id Int @id @default(autoincrement())
 
+  /// 邮箱（唯一）
+  email String @unique
+
+  /// 昵称，可选
+  name String?
+
+  /// 状态（用枚举约束）
+  status Status @default(ACTIVE)
+
+  /// 标签数组（Prisma 在 PostgreSQL 原生支持数组，MySQL 可以用 JSON 存储）
+  tags Json?
+
+  /// 扩展信息（用 JSON 存储任意结构）
+  metadata Json?
+
+  /// 积分（默认 0）
+  score Int @default(0)
+
+  /// 余额（指定 decimal 类型，避免浮点误差）
+  balance Decimal @default(0.00) @db.Decimal(10, 2)
+
+  /// 性别（用枚举）
+  gender Gender?
+
+  /// 手机号，唯一，并加索引
+  phone String? @unique @db.VarChar(20)
+
+  /// 创建时间 默认当前时间
+  createTime DateTime @default(dbgenerated("NOW()")) @db.DateTime
+
+  /// 更新时间（由 Prisma 自动管理）
+  updateTime DateTime @default(dbgenerated("NOW() ON UPDATE NOW()")) @db.Timestamp(0)
+
+  /// 软删除标记
+  deleted Boolean @default(false)
+
+  /// 组合索引（邮箱 + 手机）
+  @@index([email, phone])
+  /// 表名映射
   @@map("list")
+}
+
+/// 状态枚举
+enum Status {
+  ACTIVE
+  INACTIVE
+  BANNED
+}
+
+/// 性别枚举
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
 }
