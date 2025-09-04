@@ -4,6 +4,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
 import config from '@/config';
+import { SharedModule } from '@/shared/shared.module';
 
 import { ListModule } from './modules/list/list.module';
 
@@ -16,6 +17,7 @@ import { ListModule } from './modules/list/list.module';
       envFilePath: ['.env.local', `.env.${process.env.NODE_ENV}`, '.env'],
       load: [...Object.values(config)],
     }),
+    SharedModule,
     ListModule,
   ],
   controllers: [AppController],

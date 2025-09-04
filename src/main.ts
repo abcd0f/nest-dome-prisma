@@ -12,9 +12,10 @@ import type { ConfigKeyPaths } from './config';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  const config = app.get(ConfigService<ConfigKeyPaths>);
+  const config = app.get(ConfigService<ConfigKeyPaths, true>);
 
-  const { port, prefix } = config.get('app');
+  const { port, prefix, logger } = config.get('app', { infer: true });
+
 
   // 设置 api 访问前缀
   app.setGlobalPrefix(prefix);
@@ -24,9 +25,8 @@ async function bootstrap() {
   app.enableCors(getCorsOption());
   app.useLogger(
     new CustomLogger({
-      level: 'info',
-      logDir: 'logs',
-      enableConsole: true,
+      level: logger.level,
+      maxFiles: logger.maxFiles,
     }),
   );
 

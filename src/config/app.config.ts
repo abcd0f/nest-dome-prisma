@@ -11,6 +11,14 @@ export const AppConfig = registerAs(appRegToken, () => ({
   port: envNumber('APP_PORT', 3000),
   // 接口前缀
   prefix: env('API_PREFIX', '/api'),
+
+  // 日志配置
+  logger: {
+    // 日志级别
+    level: env('LOGGER_LEVEL'),
+    // 日志文件最大数量
+    maxFiles: env('LOGGER_MAX_FILES'),
+  },
 }));
 
 export type IAppConfig = ConfigType<typeof AppConfig>;
