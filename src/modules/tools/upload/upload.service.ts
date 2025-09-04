@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 
 import {
   saveLocalFile,
-  // getSize,
+  getSize,
   getExtname,
   getFileType,
   fileRename,
@@ -15,10 +15,8 @@ import { UploadFile } from './upload-dto';
 @Injectable()
 export class UploadService {
   async fileUpload(file: Express.Multer.File): Promise<UploadFile> {
-    console.log(file, 'file');
-
     const fileName = file.originalname;
-    // const size = getSize(file.size);
+    const size = getSize(file.size);
     const extName = getExtname(fileName);
     const type = getFileType(extName);
     const name = fileRename(fileName);
@@ -32,6 +30,7 @@ export class UploadService {
       name,
       path,
       type,
+      size,
       currentDate,
     };
   }

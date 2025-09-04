@@ -11,6 +11,9 @@ export interface UploadFile {
   /** 文件类型，例如 image、video、document */
   type: string;
 
+  /** 文件大小 */
+  size: string;
+
   /** 上传日期，格式 YYYY-MM-DD */
   currentDate: string;
 }

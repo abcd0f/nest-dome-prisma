@@ -1,5 +1,9 @@
 import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
+import { NestExpressApplication } from '@nestjs/platform-express';
+
+import path from 'node:path';
+
 import { AppModule } from './app.module';
 
 import { CustomValidationPipe } from '@/common/pipes';
@@ -10,12 +14,16 @@ import { getCorsOption } from '@/utils/cors.utils';
 import type { ConfigKeyPaths } from './config';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   const config = app.get(ConfigService<ConfigKeyPaths, true>);
 
   const { port, prefix, logger } = config.get('app', { infer: true });
 
+  const publicPath = path.join(__dirname, '..', 'public');
+  app.useStaticAssets(publicPath, {
+    prefix: '/upload',
+  });
 
   // 设置 api 访问前缀
   app.setGlobalPrefix(prefix);

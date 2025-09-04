@@ -84,7 +84,13 @@ export async function saveLocalFile(
 ) {
   const safeName = path.basename(name);
   // 拼接目录路径
-  const dirPath = path.resolve('public', 'upload', currentDate, type);
+  const dirPath = path.resolve(
+    process.cwd(),
+    'public',
+    'upload',
+    currentDate,
+    type,
+  );
   // 确保目录存在
   try {
     await fs.promises.stat(dirPath);
@@ -113,15 +119,9 @@ export async function saveLocalFile(
   });
 }
 
-// export async function saveFile(file: any, name: string) {
-//   const filePath = path.join(__dirname, '../../', 'public/upload', name);
-//   const writeStream = fs.createWriteStream(filePath);
-//   const buffer = await file.toBuffer();
-//   writeStream.write(buffer);
-// }
-
 export async function deleteFile(name: string) {
-  fs.unlink(path.join(__dirname, '../../', 'public', name), () => {
+  const filePath = path.resolve(process.cwd(), 'public', name);
+  fs.unlink(filePath, () => {
     // console.log(error);
   });
 }
