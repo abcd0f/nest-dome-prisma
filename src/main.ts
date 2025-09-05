@@ -20,8 +20,8 @@ async function bootstrap() {
 
   const { port, prefix, logger } = config.get('app', { infer: true });
 
-  const publicPath = path.join(__dirname, '..', 'public');
-  app.useStaticAssets(publicPath, {
+  const publicPath = path.join(__dirname, '..', 'public', 'upload');
+  app.useStaticAssets('public', {
     prefix: '/upload',
   });
 
