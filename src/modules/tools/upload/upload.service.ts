@@ -21,7 +21,7 @@ export class UploadService {
     const type = getFileType(extName);
     const name = fileRename(fileName);
     const currentDate = dayjs().format('YYYY-MM-DD');
-    const path = getFilePath(name, currentDate, type);
+    const path = getFilePath(fileName, currentDate, extName);
 
     await saveLocalFile(file.buffer, fileName, currentDate, extName);
 

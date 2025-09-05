@@ -21,9 +21,7 @@ async function bootstrap() {
   const { port, prefix, logger } = config.get('app', { infer: true });
 
   const publicPath = path.join(__dirname, '..', 'public', 'upload');
-  app.useStaticAssets('public', {
-    prefix: '/upload',
-  });
+  app.useStaticAssets('public');
 
   // 设置 api 访问前缀
   app.setGlobalPrefix(prefix);
