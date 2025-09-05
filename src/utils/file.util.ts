@@ -1,8 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-import type { Express } from 'express';
-
 import dayjs from 'dayjs';
 
 enum Type {

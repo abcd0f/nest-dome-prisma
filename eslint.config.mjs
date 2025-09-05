@@ -11,8 +11,8 @@ export default antfu(
   {
     rules: {
       'no-console': 'off',
-      'unused-imports/no-unused-vars': 'on',
-      'unused-imports/no-unused-imports': 2,
+      'unused-imports/no-unused-vars': 'error',
+      'unused-imports/no-unused-imports': 'error',
       'ts/consistent-type-imports': 'off',
       'node/prefer-global/process': 'off',
       'node/prefer-global/buffer': 'off',
