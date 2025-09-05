@@ -16,11 +16,11 @@ import type { ConfigKeyPaths } from './config';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
+  // 获取env变量
   const config = app.get(ConfigService<ConfigKeyPaths, true>);
-
   const { port, prefix, logger } = config.get('app', { infer: true });
 
-  const publicPath = path.join(__dirname, '..', 'public', 'upload');
+  // 设置静态资源目录
   app.useStaticAssets('public');
 
   // 设置 api 访问前缀
@@ -37,10 +37,6 @@ async function bootstrap() {
   );
 
   await app.listen(port, '0.0.0.0');
-
-  // await app.listen(process.env.PORT ?? 3000, '0.0.0.0');
-  // const url = await app.getUrl();
-  // console.log(`\n🟢 启动成功:\n   👉 ${url}\n`);
 
   const localIP = getLocalIP();
   console.log(`\n🟢 启动成功:\n   👉 http://${localIP}:${port}\n`);
