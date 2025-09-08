@@ -12,7 +12,7 @@ export const AppConfig = registerAs(appRegToken, () => ({
   // 接口前缀
   prefix: env('API_PREFIX', '/api'),
   // 返回格式模式
-  response: env('APP_RESPONSE'),
+  resmode: env('APP_RES_MODE'),
 
   // 日志配置
   logger: {

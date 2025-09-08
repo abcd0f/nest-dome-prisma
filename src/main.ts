@@ -1,3 +1,11 @@
+/*
+ * @Author: Sun wanglt-123@qq.com
+ * @Date: 2025-09-02 09:49:04
+ * @LastEditors: Sun wanglt-123@qq.com
+ * @LastEditTime: 2025-09-08 11:47:31
+ * @FilePath: \nest-prisma\src\main.ts
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { NestExpressApplication } from '@nestjs/platform-express';
@@ -16,7 +24,7 @@ async function bootstrap() {
 
   // 获取env变量
   const config = app.get(ConfigService<ConfigKeyPaths, true>);
-  const { port, prefix, logger, response } = config.get('app', { infer: true });
+  const { port, prefix, logger, resmode } = config.get('app', { infer: true });
 
   // 设置静态资源目录
   app.useStaticAssets('public');
@@ -25,7 +33,7 @@ async function bootstrap() {
   app.setGlobalPrefix(prefix);
 
   app.useGlobalPipes(new CustomValidationPipe());
-  app.useGlobalInterceptors(new ResponseInterceptor(response as any));
+  app.useGlobalInterceptors(new ResponseInterceptor(resmode as any));
   app.enableCors(getCorsOption());
   app.useLogger(
     new CustomLogger({
