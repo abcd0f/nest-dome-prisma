@@ -37,10 +37,7 @@ export class CreateListDto {
   @IsOptional()
   score?: number;
 
-  @IsDecimal(
-    { decimal_digits: '0,2' },
-    { message: '余额必须是最多两位小数的数字' },
-  )
+  @IsDecimal({ decimal_digits: '0,2' }, { message: '余额必须是最多两位小数的数字' })
   @IsOptional()
   balance?: string;
 

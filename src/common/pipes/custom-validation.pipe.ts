@@ -1,8 +1,4 @@
-import {
-  ValidationPipe,
-  ValidationError,
-  BadRequestException,
-} from '@nestjs/common';
+import { ValidationPipe, ValidationError, BadRequestException } from '@nestjs/common';
 
 /**
  * 构造函数，用于初始化验证管道配置

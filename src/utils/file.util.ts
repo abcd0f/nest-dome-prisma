@@ -15,8 +15,7 @@ export function getFileType(extName: string) {
   const documents = 'txt doc pdf ppt pps xlsx xls docx';
   const music = 'mp3 wav wma mpa ram ra aac aif m4a';
   const video = 'avi mpg mpe mpeg asf wmv mov qt rm mp4 flv m4v webm ogv ogg';
-  const image =
-    'bmp dib pcp dif wmf gif jpg tif eps psd cdr iff tga pcd mpt png jpeg';
+  const image = 'bmp dib pcp dif wmf gif jpg tif eps psd cdr iff tga pcd mpt png jpeg';
   if (image.includes(extName)) return Type.IMAGE;
 
   if (documents.includes(extName)) return Type.TXT;
@@ -74,21 +73,10 @@ export function getFilePath(name: string, currentDate: string, type: string) {
  * @param {string} currentDate 当前日期
  * @param {string} type 文件类型
  */
-export async function saveLocalFile(
-  buffer: Buffer,
-  name: string,
-  currentDate: string,
-  type: string,
-) {
+export async function saveLocalFile(buffer: Buffer, name: string, currentDate: string, type: string) {
   const safeName = path.basename(name);
   // 拼接目录路径
-  const dirPath = path.resolve(
-    process.cwd(),
-    'public',
-    'upload',
-    currentDate,
-    type,
-  );
+  const dirPath = path.resolve(process.cwd(), 'public', 'upload', currentDate, type);
   // 确保目录存在
   try {
     await fs.promises.stat(dirPath);

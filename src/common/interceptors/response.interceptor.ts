@@ -1,10 +1,4 @@
-import {
-  Injectable,
-  NestInterceptor,
-  CallHandler,
-  ExecutionContext,
-  HttpStatus,
-} from '@nestjs/common';
+import { Injectable, NestInterceptor, CallHandler, ExecutionContext, HttpStatus } from '@nestjs/common';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { Response } from 'express';
@@ -46,13 +40,8 @@ const STATUS_MESSAGES = {
  * @returns 返回包装后的统一响应格式数据流
  */
 @Injectable()
-export class ResponseInterceptor<T = any>
-  implements NestInterceptor<T, ApiResponse<T> | ApiResponseWithoutData>
-{
-  intercept(
-    context: ExecutionContext,
-    next: CallHandler,
-  ): Observable<ApiResponse<T> | ApiResponseWithoutData> {
+export class ResponseInterceptor<T = any> implements NestInterceptor<T, ApiResponse<T> | ApiResponseWithoutData> {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<ApiResponse<T> | ApiResponseWithoutData> {
     const ctx = context.switchToHttp();
     const response = ctx.getResponse<Response>();
     // const request = ctx.getRequest();
@@ -66,11 +55,7 @@ export class ResponseInterceptor<T = any>
         let data: T | undefined;
         let customMessage: string | undefined;
 
-        if (
-          result &&
-          typeof result === 'object' &&
-          ('data' in result || 'msg' in result)
-        ) {
+        if (result && typeof result === 'object' && ('data' in result || 'msg' in result)) {
           data = result.data;
           customMessage = result.msg;
         } else {
