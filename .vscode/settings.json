@@ -1,5 +1,11 @@
 {
     "cSpell.words": [
         "globalenv",
+    ],
+    "cSpell.ignorePaths": [
+        "node_modules/**",
+        "dist/**",
+        "prisma/**",
+        "build/**",
     ]
 }
