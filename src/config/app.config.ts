@@ -11,6 +11,8 @@ export const AppConfig = registerAs(appRegToken, () => ({
   port: envNumber('APP_PORT', 3000),
   // 接口前缀
   prefix: env('API_PREFIX', '/api'),
+  // 返回格式模式
+  response: env('APP_RESPONSE'),
 
   // 日志配置
   logger: {

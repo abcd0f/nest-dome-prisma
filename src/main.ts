@@ -16,7 +16,7 @@ async function bootstrap() {
 
   // 获取env变量
   const config = app.get(ConfigService<ConfigKeyPaths, true>);
-  const { port, prefix, logger } = config.get('app', { infer: true });
+  const { port, prefix, logger, response } = config.get('app', { infer: true });
 
   // 设置静态资源目录
   app.useStaticAssets('public');
@@ -25,7 +25,7 @@ async function bootstrap() {
   app.setGlobalPrefix(prefix);
 
   app.useGlobalPipes(new CustomValidationPipe());
-  app.useGlobalInterceptors(new ResponseInterceptor());
+  app.useGlobalInterceptors(new ResponseInterceptor(response as any));
   app.enableCors(getCorsOption());
   app.useLogger(
     new CustomLogger({
