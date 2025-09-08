@@ -1,4 +1,4 @@
-import * as crypto from 'crypto';
+import * as crypto from 'node:crypto';
 
 const ALGORITHM = 'aes-256-cbc';
 const IV_LENGTH = 16; // 初始化向量长度

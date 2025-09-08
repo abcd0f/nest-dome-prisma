@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import dayjs from 'dayjs';
 
-import { saveLocalFile, getSize, getExtname, getFileType, fileRename, getFilePath } from '@/utils/file.util';
+import { fileRename, getExtname, getFilePath, getFileType, getSize, saveLocalFile } from '@/utils/file.util';
 
 import { UploadFile } from './upload-dto';
 

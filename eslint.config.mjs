@@ -5,11 +5,13 @@ export default antfu(
     stylistic: {
       indent: 2,
       quotes: 'single',
+      semi: true,
     },
     typescript: true,
   },
   {
     rules: {
+      semi: ['error', 'always'],
       'no-console': 'off',
       'unused-imports/no-unused-vars': 'error',
       'unused-imports/no-unused-imports': 'error',
@@ -18,7 +20,7 @@ export default antfu(
       'node/prefer-global/buffer': 'off',
       'regexp/no-super-linear-backtracking': 'off',
       'regexp/no-contradiction-with-assertion': 'off',
-      'ts/no-unused-expressions': 'on',
+      'ts/no-unused-expressions': 'error',
     },
   },
 );

@@ -1,16 +1,16 @@
-import {
-  IsString,
-  IsNotEmpty,
-  IsOptional,
-  IsEnum,
-  IsNumber,
-  IsDecimal,
-  IsBoolean,
-  IsArray,
-  IsJSON,
-} from 'class-validator';
+import { Gender, Status } from '@prisma/generated/prisma';
 
-import { Status, Gender } from '@prisma/generated/prisma';
+import {
+  IsArray,
+  IsBoolean,
+  IsDecimal,
+  IsEnum,
+  IsJSON,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class CreateListDto {
   @IsString({ message: '邮箱必须是字符串' })
