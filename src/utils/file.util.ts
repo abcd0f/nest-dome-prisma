@@ -81,6 +81,7 @@ export async function saveLocalFile(buffer: Buffer, name: string, currentDate: s
   try {
     await fs.promises.stat(dirPath);
   } catch (err) {
+    console.log(err);
     await fs.promises.mkdir(dirPath, { recursive: true });
   }
 

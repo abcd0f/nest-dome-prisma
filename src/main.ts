@@ -1,15 +1,15 @@
-import { NestFactory } from '@nestjs/core';
+import type { ConfigKeyPaths } from './config';
 import { ConfigService } from '@nestjs/config';
+import { NestFactory } from '@nestjs/core';
+
 import { NestExpressApplication } from '@nestjs/platform-express';
 
-import { AppModule } from './app.module';
-
+import { CustomLogger, ResponseInterceptor } from '@/common/interceptors';
 import { CustomValidationPipe } from '@/common/pipes';
-import { ResponseInterceptor, CustomLogger } from '@/common/interceptors';
-import { getLocalIP } from '@/utils/localip.utils';
 import { getCorsOption } from '@/utils/cors.utils';
+import { getLocalIP } from '@/utils/localip.utils';
 
-import type { ConfigKeyPaths } from './config';
+import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);

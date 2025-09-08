@@ -19,7 +19,6 @@ export class CustomValidationPipe extends ValidationPipe {
       forbidNonWhitelisted: true,
       disableErrorMessages: false,
       exceptionFactory: (errors: ValidationError[]) => {
-        console.log(errors, 'errors');
         // 方案1: 简单字符串格式
         // const errorMessage = errors
         //   .map((err) => Object.values(err.constraints || {}))
