@@ -61,16 +61,14 @@ export class ResponseInterceptor<T = any> implements NestInterceptor<T, any> {
         if (result && typeof result === 'object' && ('data' in result || 'msg' in result)) {
           data = result.data;
           customMessage = result.msg;
-        }
-        else {
+        } else {
           data = result as T;
         }
 
         // 根据模式返回不同结构
         if (this.mode === 'simple') {
           return data;
-        }
-        else {
+        } else {
           // complex
           const baseResponse: ApiResponse<T> | ApiResponseWithoutData = {
             code: statusCode,
@@ -91,16 +89,13 @@ export class ResponseInterceptor<T = any> implements NestInterceptor<T, any> {
   }
 
   private shouldIncludeData(statusCode: number, data: any): boolean {
-    if (statusCode === HttpStatus.NO_CONTENT)
-      return false;
-    if (data === null || data === undefined)
-      return false;
+    if (statusCode === HttpStatus.NO_CONTENT) return false;
+    if (data === null || data === undefined) return false;
     return true;
   }
 
   private getStatusMessage(statusCode: number, isSuccess: boolean): string {
-    if (STATUS_MESSAGES[statusCode])
-      return STATUS_MESSAGES[statusCode];
+    if (STATUS_MESSAGES[statusCode]) return STATUS_MESSAGES[statusCode];
     return isSuccess ? '操作成功' : '操作失败';
   }
 }

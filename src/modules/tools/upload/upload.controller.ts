@@ -18,8 +18,7 @@ export class UploadController {
       const data = await this.uploadService.fileUpload(file);
 
       return { data, msg: '上传成功' };
-    }
-    catch (error) {
+    } catch (error) {
       console.log(error);
       throw new BadRequestException('上传失败');
     }
@@ -35,8 +34,7 @@ export class UploadController {
         results.push(result);
       }
       return { data: results, msg: '上传成功' };
-    }
-    catch (error) {
+    } catch (error) {
       console.log(error);
       throw new BadRequestException('上传失败');
     }

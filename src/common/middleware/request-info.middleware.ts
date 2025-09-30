@@ -30,24 +30,21 @@ export class RequestInfoMiddleware implements NestMiddleware {
       let statusColor = colors.reset;
       if (res.statusCode >= 500) {
         statusColor = colors.red; // 服务器错误
-      }
-      else if (res.statusCode >= 400) {
+      } else if (res.statusCode >= 400) {
         statusColor = colors.yellow; // 客户端错误
-      }
-      else if (res.statusCode >= 300) {
+      } else if (res.statusCode >= 300) {
         statusColor = colors.cyan; // 重定向
-      }
-      else if (res.statusCode >= 200) {
+      } else if (res.statusCode >= 200) {
         statusColor = colors.green; // 成功
       }
 
       console.log(
-        `${colors.magenta}[REQ]${colors.reset} --> `
-        + `${colors.blue}${method}${colors.reset} `
-        + `${originalUrl} | `
-        + `${colors.gray}${ip}${colors.reset} | `
-        + `${statusColor}${res.statusCode}${colors.reset} | `
-        + `${colors.yellow}${duration}ms${colors.reset}`,
+        `${colors.magenta}[REQ]${colors.reset} --> ` +
+          `${colors.blue}${method}${colors.reset} ` +
+          `${originalUrl} | ` +
+          `${colors.gray}${ip}${colors.reset} | ` +
+          `${statusColor}${res.statusCode}${colors.reset} | ` +
+          `${colors.yellow}${duration}ms${colors.reset}`,
       );
     });
 

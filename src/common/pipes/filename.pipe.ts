@@ -4,7 +4,7 @@ import { Injectable, PipeTransform } from '@nestjs/common';
 export class FileNamePipe implements PipeTransform {
   transform(value: Express.Multer.File | Express.Multer.File[]) {
     if (Array.isArray(value)) {
-      return value.map(file => this.handleFile(file));
+      return value.map((file) => this.handleFile(file));
     }
     return this.handleFile(value);
   }
