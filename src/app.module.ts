@@ -1,7 +1,6 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
-import { RequestInfoMiddleware } from '@/common/middleware';
 import config from '@/config';
 import { SharedModule } from '@/shared/shared.module';
 
@@ -25,8 +24,4 @@ import { ToolsModule } from './modules/tools/tools.module';
   controllers: [],
   providers: [],
 })
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(RequestInfoMiddleware).forRoutes('*'); // 全局应用
-  }
-}
+export class AppModule {}
