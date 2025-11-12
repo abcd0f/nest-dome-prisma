@@ -65,9 +65,18 @@ export class ResponseInterceptor<T = any> implements NestInterceptor<T, any> {
           data = result as T;
         }
 
+        const msg = customMessage || this.getStatusMessage(statusCode, isSuccess);
+
         // 根据模式返回不同结构
         if (this.mode === 'simple') {
-          return data;
+          const simpleResponse: { code: number; msg: string; data?: T } = {
+            code: statusCode,
+            msg,
+          };
+          if (this.shouldIncludeData(statusCode, data)) {
+            simpleResponse.data = data;
+          }
+          return simpleResponse;
         } else {
           // complex
           const baseResponse: ApiResponse<T> | ApiResponseWithoutData = {
