@@ -4,6 +4,8 @@ import { PrismaService } from '@/database/database.service';
 import { CreateListDto } from './dto/create-list.dto';
 import { UpdateListDto } from './dto/update-list.dto';
 
+import { paginate } from '@/common/utils';
+
 @Injectable()
 export class ListService {
   constructor(private prisma: PrismaService) {}
@@ -14,8 +16,15 @@ export class ListService {
   }
 
   async findAll() {
-    const data = await this.prisma.list.findMany();
-    return data;
+    // const data = await this.prisma.list.findMany();
+    const data = await paginate(this.prisma, 'list', {
+      page: 1,
+      pageSize: 1,
+    });
+
+    return {
+      data,
+    };
   }
 
   async findOne(id: number) {
