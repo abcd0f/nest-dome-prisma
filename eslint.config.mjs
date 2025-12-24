@@ -21,6 +21,9 @@ export default antfu(
       'regexp/no-super-linear-backtracking': 'off',
       'regexp/no-contradiction-with-assertion': 'off',
       'ts/no-unused-expressions': 'error',
+      'style/brace-style': 'off',
+      'style/quote-props': 'off',
+      'antfu/if-newline': 'off',
     },
   },
 );

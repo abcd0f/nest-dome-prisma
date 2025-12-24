@@ -1,10 +1,10 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 
+import { paginate } from '@/common/utils';
 import { PrismaService } from '@/database/database.service';
 import { CreateListDto } from './dto/create-list.dto';
-import { UpdateListDto } from './dto/update-list.dto';
 
-import { paginate } from '@/common/utils';
+import { UpdateListDto } from './dto/update-list.dto';
 
 @Injectable()
 export class ListService {
