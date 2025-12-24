@@ -1,10 +1,8 @@
-import type { Express } from 'express';
-import { BadRequestException, Controller, Post, UploadedFile, UploadedFiles, UseInterceptors } from '@nestjs/common';
-import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import type { FastifyRequest } from 'fastify';
+import type { UploadFile } from './upload-dto';
 
-import { FileNamePipe } from '@/common/pipes/index';
+import { BadRequestException, Controller, Post, Req } from '@nestjs/common';
 
-import { UploadFile } from './upload-dto';
 import { UploadService } from './upload.service';
 
 @Controller('upload')
@@ -12,30 +10,69 @@ export class UploadController {
   constructor(private readonly uploadService: UploadService) {}
 
   @Post('file')
-  @UseInterceptors(FileInterceptor('file'))
-  async uploadFile(@UploadedFile(FileNamePipe) file: Express.Multer.File) {
+  async uploadFile(@Req() req: FastifyRequest) {
     try {
-      const data = await this.uploadService.fileUpload(file);
+      const file = await req.file();
 
-      return { data, msg: '上传成功' };
+      if (!file) {
+        throw new BadRequestException('未检测到上传文件');
+      }
+
+      const result = await this.uploadService.fileUpload({
+        filename: file.filename,
+        mimetype: file.mimetype,
+        stream: file.file, // 重点：ReadableStream
+      });
+
+      return { data: result, msg: '上传成功' };
     } catch (error) {
-      console.log(error);
+      if (error?.code?.startsWith('FST_')) {
+        throw new BadRequestException({
+          code: error.statusCode || 500,
+          message: error.message || '服务器内部错误',
+        });
+      }
+
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+
       throw new BadRequestException('上传失败');
     }
   }
 
   @Post('files')
-  @UseInterceptors(FilesInterceptor('files', 10)) // 'files' 是前端字段名，最多接收 10 个文件
-  async uploadFiles(@UploadedFiles(FileNamePipe) files: Express.Multer.File[]) {
+  async uploadFiles(@Req() req: FastifyRequest) {
     try {
-      const results = [] as UploadFile[];
-      for (const file of files) {
-        const result = await this.uploadService.fileUpload(file);
+      const parts = req.parts();
+
+      const results: UploadFile[] = [];
+
+      for await (const part of parts) {
+        if (part.type !== 'file') continue;
+
+        const result = await this.uploadService.fileUpload({
+          filename: part.filename,
+          mimetype: part.mimetype,
+          stream: part.file,
+        });
+
         results.push(result);
       }
+
       return { data: results, msg: '上传成功' };
     } catch (error) {
-      console.log(error);
+      if (error?.code?.startsWith('FST_')) {
+        throw new BadRequestException({
+          code: error.statusCode || 500,
+          message: error.message || '服务器内部错误',
+        });
+      }
+
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+
       throw new BadRequestException('上传失败');
     }
   }

@@ -1,51 +1,47 @@
 import { Injectable } from '@nestjs/common';
+
 import dayjs from 'dayjs';
 
-import { fileRename, getExtname, getFilePath, getFileType, getSize, saveLocalFile } from '@/utils/file.util';
+import { fileRename, getExtname, getFilePath, getFileType, getSize, saveLocalFileByStream } from '@/utils/file.util';
 
-import { UploadFile } from './upload-dto';
+import { UploadFile, UploadInput } from './upload-dto';
 
 @Injectable()
 export class UploadService {
-  async fileUpload(file: Express.Multer.File): Promise<UploadFile> {
-    const fileName = file.originalname;
-    const size = getSize(file.size);
-    const extName = getExtname(fileName);
-    const type = getFileType(extName);
-    const name = fileRename(fileName);
-    const currentDate = dayjs().format('YYYY-MM-DD');
-    const path = getFilePath(fileName, currentDate, extName);
+  /**
+   * 单文件上传（Fastify Stream 版本）
+   */
+  async fileUpload(file: UploadInput): Promise<UploadFile> {
+    const { filename, stream } = file;
 
-    await saveLocalFile(file.buffer, fileName, currentDate, extName);
+    // 原始文件名
+    const fileName = filename;
+
+    // 扩展名
+    const extName = getExtname(fileName);
+
+    // 文件类型（图片 / 文档 / 音乐 / 视频 / 其他）
+    const type = getFileType(extName);
+
+    // 重命名后的文件名
+    const name = fileRename(fileName);
+
+    // 当前日期目录
+    const currentDate = dayjs().format('YYYY-MM-DD');
+
+    // 访问路径
+    const path = getFilePath(name, currentDate, type);
+
+    // 保存文件（通过 stream），并获取真实大小
+    const { size } = await saveLocalFileByStream(stream, name, currentDate, type);
 
     return {
       fileName,
       name,
       path,
       type,
-      size,
+      size: getSize(size),
       currentDate,
     };
   }
-
-  // async fileUploads(files: Express.Multer.File[]): Promise<any> {
-  //   console.log(files, 'file');
-
-  //   const results = [] as any[];
-
-  //   for (const file of files) {
-  //     const fileName = file.originalname;
-  //     const extName = getExtname(fileName);
-  //     const type = getFileType(extName);
-  //     const name = fileRename(fileName);
-  //     const currentDate = dayjs().format('YYYY-MM-DD');
-  //     const path = getFilePath(name, currentDate, type);
-
-  //     await saveLocalFile(file.buffer, fileName, currentDate, extName);
-
-  //     results.push({ fileName, name, path, type, currentDate });
-  //   }
-
-  //   return { data: results };
-  // }
 }

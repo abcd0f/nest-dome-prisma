@@ -1,3 +1,5 @@
+import type { Readable } from 'node:stream';
+
 export interface UploadFile {
   /** 原始文件名 */
   fileName: string;
@@ -16,4 +18,15 @@ export interface UploadFile {
 
   /** 上传日期，格式 YYYY-MM-DD */
   currentDate: string;
+}
+
+export interface UploadInput {
+  /** 原始文件名 */
+  filename: string;
+
+  /** MIME 类型 */
+  mimetype: string;
+
+  /** Fastify multipart 提供的可读流 */
+  stream: Readable;
 }

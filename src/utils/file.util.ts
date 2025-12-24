@@ -1,30 +1,40 @@
+import type { Readable } from 'node:stream';
+
 import fs from 'node:fs';
 import path from 'node:path';
+import { pipeline } from 'node:stream/promises';
 
 import dayjs from 'dayjs';
 
-enum Type {
-  IMAGE = '图片',
-  TXT = '文档',
-  MUSIC = '音乐',
-  VIDEO = '视频',
-  OTHER = '其他',
+export enum FileTypeCode {
+  IMAGE = 'image',
+  DOCUMENT = 'document',
+  MUSIC = 'music',
+  VIDEO = 'video',
+  OTHER = 'other',
 }
 
+export const FileTypeLabelMap: Record<FileTypeCode, string> = {
+  [FileTypeCode.IMAGE]: '图片',
+  [FileTypeCode.DOCUMENT]: '文档',
+  [FileTypeCode.MUSIC]: '音乐',
+  [FileTypeCode.VIDEO]: '视频',
+  [FileTypeCode.OTHER]: '其他',
+};
 export function getFileType(extName: string) {
   const documents = 'txt doc pdf ppt pps xlsx xls docx';
   const music = 'mp3 wav wma mpa ram ra aac aif m4a';
   const video = 'avi mpg mpe mpeg asf wmv mov qt rm mp4 flv m4v webm ogv ogg';
   const image = 'bmp dib pcp dif wmf gif jpg tif eps psd cdr iff tga pcd mpt png jpeg';
-  if (image.includes(extName)) return Type.IMAGE;
+  if (image.includes(extName)) return FileTypeCode.IMAGE;
 
-  if (documents.includes(extName)) return Type.TXT;
+  if (documents.includes(extName)) return FileTypeCode.DOCUMENT;
 
-  if (music.includes(extName)) return Type.MUSIC;
+  if (music.includes(extName)) return FileTypeCode.MUSIC;
 
-  if (video.includes(extName)) return Type.VIDEO;
+  if (video.includes(extName)) return FileTypeCode.VIDEO;
 
-  return Type.OTHER;
+  return FileTypeCode.OTHER;
 }
 
 export function getName(fileName: string) {
@@ -62,8 +72,42 @@ export function fileRename(fileName: string) {
   return `${name}-${time}${extName}`;
 }
 
-export function getFilePath(name: string, currentDate: string, type: string) {
+export function getFilePath(name: string, currentDate: string, type: FileTypeCode) {
   return `/upload/${currentDate}/${type}/${name}`;
+}
+
+/**
+ * 通过 Stream 保存文件（Fastify 推荐）
+ * @returns 返回文件真实字节大小
+ */
+export async function saveLocalFileByStream(
+  stream: Readable,
+  name: string,
+  currentDate: string,
+  type: FileTypeCode,
+): Promise<{ size: number }> {
+  const safeName = path.basename(name);
+
+  const dirPath = path.resolve(process.cwd(), 'public', 'upload', currentDate, type);
+
+  // 确保目录存在
+  await fs.promises.mkdir(dirPath, { recursive: true });
+
+  const fullPath = path.join(dirPath, safeName);
+
+  let size = 0;
+
+  // 统计文件大小
+  stream.on('data', (chunk: Buffer) => {
+    size += chunk.length;
+  });
+
+  const writeStream = fs.createWriteStream(fullPath);
+
+  // 使用 pipeline 保证错误可捕获
+  await pipeline(stream, writeStream);
+
+  return { size };
 }
 
 /**
@@ -71,9 +115,9 @@ export function getFilePath(name: string, currentDate: string, type: string) {
  * @param {Buffer} buffer 文件buffer
  * @param {string} name 文件名
  * @param {string} currentDate 当前日期
- * @param {string} type 文件类型
+ * @param {FileTypeCode} type 文件类型
  */
-export async function saveLocalFile(buffer: Buffer, name: string, currentDate: string, type: string) {
+export async function saveLocalFile(buffer: Buffer, name: string, currentDate: string, type: FileTypeCode) {
   const safeName = path.basename(name);
   // 拼接目录路径
   const dirPath = path.resolve(process.cwd(), 'public', 'upload', currentDate, type);
