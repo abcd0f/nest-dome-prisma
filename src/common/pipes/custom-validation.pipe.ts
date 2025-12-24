@@ -33,7 +33,7 @@ export class CustomValidationPipe extends ValidationPipe {
         // });
 
         // 方案2: 结构化格式（注释掉上面的代码，使用这个）
-        const formattedErrors = errors.map((error) => ({
+        const formattedErrors = errors.map(error => ({
           field: error.property,
           messages: Object.values(error.constraints || {}),
         }));
