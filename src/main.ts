@@ -7,6 +7,7 @@ import { NestFactory } from '@nestjs/core';
 import { NestFastifyApplication } from '@nestjs/platform-fastify';
 
 import { fastifyApp, setFastifyApp } from '@/common/adapters/fastify.adapter';
+import { HttpExceptionFilter } from '@/common/filters';
 import { CustomLogger, ResponseInterceptor } from '@/common/interceptors';
 import { CustomValidationPipe } from '@/common/pipes';
 
@@ -32,6 +33,7 @@ async function bootstrap() {
 
   app.useGlobalPipes(new CustomValidationPipe());
   app.useGlobalInterceptors(new ResponseInterceptor(resmode as any));
+  app.useGlobalFilters(new HttpExceptionFilter());
   app.enableCors(getCorsOption());
   app.useLogger(
     new CustomLogger({
