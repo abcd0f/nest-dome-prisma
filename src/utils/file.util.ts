@@ -77,82 +77,121 @@ export function getFilePath(name: string, currentDate: string, type: FileTypeCod
 }
 
 /**
- * 通过 Stream 保存文件（Fastify 推荐）
- * @returns 返回文件真实字节大小
+ * 通过 Stream 保存文件(Fastify 推荐)
+ * @returns 返回文件真实字节大小和是否被截断
+ * @throws 如果文件超出大小限制会抛出错误
  */
 export async function saveLocalFileByStream(
   stream: Readable,
   name: string,
   currentDate: string,
   type: FileTypeCode,
-): Promise<{ size: number }> {
+): Promise<{ size: number; truncated: boolean }> {
   const safeName = path.basename(name);
-
   const dirPath = path.resolve(process.cwd(), 'public', 'upload', currentDate, type);
-
-  // 确保目录存在
   await fs.promises.mkdir(dirPath, { recursive: true });
 
   const fullPath = path.join(dirPath, safeName);
 
   let size = 0;
+  let truncated = false;
 
-  // 统计文件大小
   stream.on('data', (chunk: Buffer) => {
     size += chunk.length;
   });
 
-  const writeStream = fs.createWriteStream(fullPath);
+  // 监听 limit 事件
+  stream.on('limit', () => {
+    truncated = true;
+  });
 
-  // 使用 pipeline 保证错误可捕获
-  await pipeline(stream, writeStream);
+  try {
+    await pipeline(stream, fs.createWriteStream(fullPath));
 
-  return { size };
+    // 如果文件被截断,删除已上传的文件
+    if (truncated) {
+      await fs.promises.unlink(fullPath);
+    }
+
+    return { size, truncated };
+  } catch (error) {
+    // 如果发生错误,尝试清理文件
+    try {
+      await fs.promises.unlink(fullPath);
+    } catch {
+      // 忽略删除失败的错误
+    }
+    throw error;
+  }
 }
 
 /**
- * 将file保存到本地
- * @param {Buffer} buffer 文件buffer
- * @param {string} name 文件名
- * @param {string} currentDate 当前日期
- * @param {FileTypeCode} type 文件类型
+ * 删除文件
+ * @param name - 文件路径(相对于 public 目录)
+ * @returns Promise<boolean> - 删除成功返回 true,失败返回 false
  */
-export async function saveLocalFile(buffer: Buffer, name: string, currentDate: string, type: FileTypeCode) {
-  const safeName = path.basename(name);
-  // 拼接目录路径
-  const dirPath = path.resolve(process.cwd(), 'public', 'upload', currentDate, type);
-  // 确保目录存在
+export async function deleteFile(name: string): Promise<boolean> {
+  const filePath = path.resolve(process.cwd(), 'public', name);
+
   try {
-    await fs.promises.stat(dirPath);
-  } catch (err) {
-    console.log(err);
-    await fs.promises.mkdir(dirPath, { recursive: true });
+    // 检查文件是否存在
+    await fs.promises.access(filePath, fs.constants.F_OK);
+
+    // 删除文件
+    await fs.promises.unlink(filePath);
+
+    return true;
+  } catch (error) {
+    // 文件不存在或删除失败
+    console.error('删除文件失败:', filePath, error);
+    return false;
   }
-
-  // 拼接完整文件路径
-  const fullPath = path.join(dirPath, safeName);
-  console.log('保存路径:', fullPath);
-
-  return new Promise<void>((resolve, reject) => {
-    const writeStream = fs.createWriteStream(fullPath);
-
-    writeStream.on('error', (err) => {
-      reject(err);
-    });
-
-    writeStream.on('finish', () => {
-      resolve();
-    });
-
-    writeStream.write(buffer, () => {
-      writeStream.end(); // 关闭流
-    });
-  });
 }
 
-export async function deleteFile(name: string) {
-  const filePath = path.resolve(process.cwd(), 'public', name);
-  fs.unlink(filePath, () => {
-    // console.log(error);
-  });
+/**
+ * 批量删除文件
+ * @param names - 文件路径数组
+ * @returns Promise<{success: string[], failed: string[]}> - 删除结果统计
+ */
+export async function deleteFiles(names: string[]): Promise<{
+  success: string[];
+  failed: string[];
+}> {
+  const success: string[] = [];
+  const failed: string[] = [];
+
+  await Promise.all(
+    names.map(async (name) => {
+      const result = await deleteFile(name);
+      if (result) {
+        success.push(name);
+      } else {
+        failed.push(name);
+      }
+    }),
+  );
+
+  return { success, failed };
+}
+
+/**
+ * 删除指定目录下的所有文件
+ * @param dirPath - 目录路径(相对于 public 目录)
+ * @returns Promise<number> - 返回删除的文件数量
+ */
+export async function deleteDirectory(dirPath: string): Promise<number> {
+  const fullPath = path.resolve(process.cwd(), 'public', dirPath);
+
+  try {
+    // 检查目录是否存在
+    await fs.promises.access(fullPath, fs.constants.F_OK);
+
+    // 递归删除目录及其内容
+    await fs.promises.rm(fullPath, { recursive: true, force: true });
+
+    return 1;
+  } catch (error) {
+    console.error('删除目录失败:', fullPath, error);
+    return 0;
+  }
 }

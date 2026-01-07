@@ -18,6 +18,7 @@ function setFastifyApp(app: FastifyAdapter) {
       fileSize: envNumber('UPLOAD_MAX_FILE_SIZE') * 1024 * 1024, // 单个文件最大字节数 10M
       files: envNumber('UPLOAD_MAX_FILES'), // 允许同时上传的文件数量
     },
+    throwFileSizeLimit: true,
   });
 }
 

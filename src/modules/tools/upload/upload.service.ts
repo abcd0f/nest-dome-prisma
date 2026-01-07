@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
 
 import dayjs from 'dayjs';
 
@@ -33,7 +33,11 @@ export class UploadService {
     const path = getFilePath(name, currentDate, type);
 
     // 保存文件（通过 stream），并获取真实大小
-    const { size } = await saveLocalFileByStream(stream, name, currentDate, type);
+    const { size, truncated } = await saveLocalFileByStream(stream, name, currentDate, type);
+
+    if (truncated) {
+      throw new BadRequestException({ code: HttpStatus.BAD_REQUEST, message: '文件大小不能超过 10MB' });
+    }
 
     return {
       fileName,

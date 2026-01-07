@@ -1,7 +1,7 @@
 import type { FastifyRequest } from 'fastify';
 import type { UploadFile } from './upload-dto';
 
-import { BadRequestException, Controller, Post, Req } from '@nestjs/common';
+import { BadRequestException, Controller, HttpStatus, Post, Req } from '@nestjs/common';
 
 import { UploadService } from './upload.service';
 
@@ -15,7 +15,10 @@ export class UploadController {
       const file = await req.file();
 
       if (!file) {
-        throw new BadRequestException('未检测到上传文件');
+        throw new BadRequestException({
+          code: HttpStatus.BAD_REQUEST,
+          message: '未检测到上传文件',
+        });
       }
 
       const result = await this.uploadService.fileUpload({
@@ -26,18 +29,7 @@ export class UploadController {
 
       return { data: result, msg: '上传成功' };
     } catch (error) {
-      if (error?.code?.startsWith('FST_')) {
-        throw new BadRequestException({
-          code: error.statusCode || 500,
-          message: error.message || '服务器内部错误',
-        });
-      }
-
-      if (error instanceof BadRequestException) {
-        throw error;
-      }
-
-      throw new BadRequestException('上传失败');
+      throw this.handleError(error, '文件上传失败');
     }
   }
 
@@ -60,20 +52,53 @@ export class UploadController {
         results.push(result);
       }
 
-      return { data: results, msg: '上传成功' };
-    } catch (error) {
-      if (error?.code?.startsWith('FST_')) {
+      if (results.length === 0) {
         throw new BadRequestException({
-          code: error.statusCode || 500,
-          message: error.message || '服务器内部错误',
+          code: HttpStatus.BAD_REQUEST,
+          message: '未检测到上传文件',
         });
       }
 
-      if (error instanceof BadRequestException) {
-        throw error;
+      return { data: results, msg: '上传成功' };
+    } catch (error) {
+      throw this.handleError(error, '文件批量上传失败');
+    }
+  }
+
+  /**
+   * 统一错误处理方法
+   * @param error 错误对象
+   * @param defaultMessage 默认错误消息
+   */
+  private handleError(error: any, defaultMessage: string): BadRequestException {
+    // 处理 Fastify 特定错误
+    if (error?.code?.startsWith('FST_')) {
+      return new BadRequestException({
+        code: error.statusCode || HttpStatus.INTERNAL_SERVER_ERROR,
+        message: error.message || '服务器内部错误',
+      });
+    }
+
+    // 处理已经是 BadRequestException 的情况
+    if (error instanceof BadRequestException) {
+      const response = error.getResponse();
+
+      // 如果已经是正确格式，直接返回
+      if (typeof response === 'object' && 'code' in response && 'message' in response) {
+        return error;
       }
 
-      throw new BadRequestException('上传失败');
+      // 否则格式化为统一格式
+      return new BadRequestException({
+        code: error.getStatus(),
+        message: typeof response === 'string' ? response : (response as any).message || defaultMessage,
+      });
     }
+
+    // 处理其他类型的错误
+    return new BadRequestException({
+      code: HttpStatus.BAD_REQUEST,
+      message: error?.message || defaultMessage,
+    });
   }
 }
