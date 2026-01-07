@@ -6,7 +6,7 @@ import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { NestFastifyApplication } from '@nestjs/platform-fastify';
 
-import { fastifyApp } from '@/common/adapters/fastify.adapter';
+import { fastifyApp, setFastifyApp } from '@/common/adapters/fastify.adapter';
 import { CustomLogger, ResponseInterceptor } from '@/common/interceptors';
 import { CustomValidationPipe } from '@/common/pipes';
 
@@ -17,6 +17,8 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(AppModule, fastifyApp);
+
+  setFastifyApp(fastifyApp);
 
   // 获取env变量
   const config = app.get(ConfigService<ConfigKeyPaths, true>);
