@@ -1,4 +1,4 @@
-import { Gender, Status } from '@prisma/generated/prisma';
+import { Gender, Status } from '@prisma/generated/prisma/enums';
 
 import {
   IsArray,

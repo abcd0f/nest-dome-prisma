@@ -1,4 +1,4 @@
-import { PrismaService } from '@/database/database.service';
+import { PrismaService } from '@/database/prisma.service';
 
 export interface PaginationParams<T> {
   page?: number;

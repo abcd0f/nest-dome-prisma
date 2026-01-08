@@ -20,6 +20,29 @@ function setFastifyApp(app: FastifyAdapter) {
     },
     throwFileSizeLimit: true,
   });
+
+  app.getInstance().addHook('onRequest', (request, reply, done) => {
+    // set undefined origin
+    const { origin } = request.headers;
+    if (!origin) request.headers.origin = request.headers.host;
+
+    // forbidden php
+
+    const { url } = request;
+
+    if (url.endsWith('.php')) {
+      const msg = `Eh. PHP is not support on this machine. Yep, I also think PHP is bestest programming language. But for me it is beyond my reach.`;
+
+      reply.raw.statusMessage = msg;
+
+      return reply.code(418).send();
+    }
+
+    // skip favicon request
+    if (url.match(/favicon.ico$/) || url.match(/manifest.json$/)) return reply.code(204).send();
+
+    done();
+  });
 }
 
 export { app as fastifyApp, setFastifyApp };

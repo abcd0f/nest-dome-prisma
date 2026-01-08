@@ -6,6 +6,8 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { TimeoutInterceptor } from '@/common/interceptors';
 import config from '@/config';
 
+import { PrismaModule } from '@/database/prisma.module';
+
 import { SharedModule } from '@/shared/shared.module';
 
 import { ListModule } from './modules/list/list.module';
@@ -27,6 +29,8 @@ import { ToolsModule } from './modules/tools/tools.module';
       { name: 'medium', ttl: 10000, limit: 20 },
       { name: 'long', ttl: 60000, limit: 100 },
     ]),
+
+    PrismaModule,
 
     SharedModule,
     ListModule,
