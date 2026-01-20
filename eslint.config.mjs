@@ -10,6 +10,9 @@ export default antfu(
     typescript: true,
   },
   {
+    ignores: ['**/*.md'],
+  },
+  {
     rules: {
       semi: ['error', 'always'],
       'no-console': 'off',
@@ -23,6 +26,7 @@ export default antfu(
       'ts/no-unused-expressions': 'error',
       'style/brace-style': 'off',
       'style/quote-props': 'off',
+      'style/eol-last': 'off',
       'antfu/if-newline': 'off',
     },
   },
