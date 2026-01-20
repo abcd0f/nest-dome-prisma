@@ -1,134 +1,112 @@
+import type { ComplexResponse, PageResult, ResponseMode, SimpleResponse } from '@/common/types';
 import { CallHandler, ExecutionContext, HttpStatus, Injectable, NestInterceptor } from '@nestjs/common';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 
-// 统一响应接口
-interface ApiResponse<T = any> {
-  data?: T;
-  code: number;
-  success?: boolean;
-  msg: string;
-  timestamp?: string;
-  path?: string;
-}
+import { map, Observable } from 'rxjs';
 
-// 无数据响应接口
-interface ApiResponseWithoutData {
-  code: number;
-  success?: boolean;
-  msg: string;
-  timestamp?: string;
-  path?: string;
-}
+/* ===================== 常量 ===================== */
 
-// 响应消息映射
-const STATUS_MESSAGES = {
+const STATUS_MESSAGES: Record<number, string> = {
   [HttpStatus.OK]: '操作成功',
   [HttpStatus.CREATED]: '创建成功',
-  [HttpStatus.ACCEPTED]: '请求已接受',
   [HttpStatus.NO_CONTENT]: '删除成功',
   [HttpStatus.BAD_REQUEST]: '请求参数错误',
   [HttpStatus.UNAUTHORIZED]: '未授权访问',
   [HttpStatus.FORBIDDEN]: '禁止访问',
   [HttpStatus.NOT_FOUND]: '资源不存在',
   [HttpStatus.INTERNAL_SERVER_ERROR]: '服务器内部错误',
-} as const;
+};
 
-type ResponseMode = 'simple' | 'complex';
+/* ===================== 工具函数 ===================== */
 
-export interface PageResult<T> {
-  items: T[];
-  meta: {
-    page: number;
-    pageSize: number;
-    total: number;
-    totalPage: number;
-  };
+function isPageResult(data: any): data is PageResult<any> {
+  return (
+    data && typeof data === 'object' && Array.isArray(data.items) && data.meta && typeof data.meta.page === 'number'
+  );
 }
 
-/**
- * 拦截器核心方法，用于统一处理HTTP响应格式
- * @returns 返回包装后的统一响应格式数据流
- */
-@Injectable()
-export class ResponseInterceptor<T = any> implements NestInterceptor<T, any> {
-  constructor(private mode: ResponseMode = 'complex') {}
+function shouldIncludeData(status: number, data: unknown): boolean {
+  return status !== HttpStatus.NO_CONTENT && data !== undefined && data !== null;
+}
 
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    const ctx = context.switchToHttp();
-    const response = ctx.getResponse<FastifyReply>();
-    const request = ctx.getRequest<FastifyRequest>();
+function resolveMessage(status: number, custom?: string): string {
+  return custom ?? STATUS_MESSAGES[status] ?? '操作成功';
+}
+
+/* ===================== 拦截器 ===================== */
+
+@Injectable()
+export class ResponseInterceptor<T = any> implements NestInterceptor<T, SimpleResponse | ComplexResponse> {
+  constructor(private readonly mode: ResponseMode = 'complex') {}
+
+  intercept(context: ExecutionContext, next: CallHandler): Observable<SimpleResponse | ComplexResponse> {
+    const http = context.switchToHttp();
+    const res = http.getResponse<FastifyReply>();
+    const req = http.getRequest<FastifyRequest>();
 
     return next.handle().pipe(
-      map((result: T | { data?: T; msg?: string }) => {
-        const statusCode = response.statusCode;
-        const isSuccess = statusCode >= 200 && statusCode < 300;
+      map((raw) => {
+        const status = res.statusCode;
+        const success = status >= 200 && status < 300;
 
-        let data: T | undefined;
-        let customMessage: string | undefined;
+        const { data, msg } = this.normalizeResult(raw);
+        const message = resolveMessage(status, msg);
 
-        if (result && typeof result === 'object' && ('data' in result || 'msg' in result)) {
-          data = result.data;
-          customMessage = result.msg;
-        } else {
-          data = result as T;
-        }
+        const payload = this.normalizeData(status, data);
 
-        const msg = customMessage || this.getStatusMessage(statusCode, isSuccess);
-
-        // 根据模式返回不同结构
-        if (this.mode === 'simple') {
-          const simpleResponse: { code: number; msg: string; data?: T } = {
-            code: statusCode,
-            msg,
-          };
-          if (this.shouldIncludeData(statusCode, data)) {
-            simpleResponse.data = data;
-          }
-          return simpleResponse;
-        } else {
-          // complex
-          const baseResponse: ApiResponse<T> | ApiResponseWithoutData = {
-            code: statusCode,
-            success: isSuccess,
-            msg: customMessage || this.getStatusMessage(statusCode, isSuccess),
-            timestamp: new Date().toISOString(),
-            path: request.url,
-          };
-
-          if (this.shouldIncludeData(statusCode, data)) {
-            if (this.isPageResult(data)) {
-              return {
-                ...baseResponse,
-                data: data.items,
-                meta: data.meta,
-              };
-            }
-
-            return { ...baseResponse, data };
-          }
-
-          return baseResponse;
-        }
+        return this.mode === 'simple'
+          ? this.buildSimple(status, message, payload)
+          : this.buildComplex(status, message, success, req.url, payload);
       }),
     );
   }
 
-  private isPageResult(data: any): data is PageResult<any> {
-    return (
-      data && typeof data === 'object' && Array.isArray(data.items) && data.meta && typeof data.meta.page === 'number'
-    );
+  /* ===================== 构建器 ===================== */
+
+  private buildSimple(code: number, msg: string, payload?: { data?: any; meta?: any }): SimpleResponse {
+    return {
+      code,
+      msg,
+      ...payload,
+    };
   }
 
-  private shouldIncludeData(statusCode: number, data: any): boolean {
-    if (statusCode === HttpStatus.NO_CONTENT) return false;
-    if (data === null || data === undefined) return false;
-    return true;
+  private buildComplex(
+    code: number,
+    msg: string,
+    success: boolean,
+    path: string,
+    payload?: { data?: any; meta?: any },
+  ): ComplexResponse {
+    return {
+      code,
+      success,
+      msg,
+      timestamp: new Date().toISOString(),
+      path,
+      ...payload,
+    };
   }
 
-  private getStatusMessage(statusCode: number, isSuccess: boolean): string {
-    if (STATUS_MESSAGES[statusCode]) return STATUS_MESSAGES[statusCode];
-    return isSuccess ? '操作成功' : '操作失败';
+  /* ===================== 规范化 ===================== */
+
+  private normalizeResult(result: any): { data?: any; msg?: string } {
+    if (result && typeof result === 'object' && ('data' in result || 'msg' in result)) {
+      return result;
+    }
+    return { data: result };
+  }
+
+  private normalizeData(status: number, data: any): { data?: any; meta?: any } | undefined {
+    if (!shouldIncludeData(status, data)) return;
+
+    if (isPageResult(data)) {
+      return {
+        data: data.items,
+        meta: data.meta,
+      };
+    }
+
+    return { data };
   }
 }
