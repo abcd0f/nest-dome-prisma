@@ -17,14 +17,12 @@ export class ListService {
 
   async findAll() {
     // const data = await this.prisma.list.findMany();
-    const data = await paginate(this.prisma, 'list', {
+    const data = await paginate(this.prisma.list, {
       page: 1,
-      pageSize: 1,
+      pageSize: 5,
     });
 
-    return {
-      data,
-    };
+    return data;
   }
 
   async findOne(id: number) {

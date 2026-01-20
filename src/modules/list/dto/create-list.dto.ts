@@ -5,9 +5,9 @@ import {
   IsBoolean,
   IsDecimal,
   IsEnum,
-  IsJSON,
   IsNotEmpty,
   IsNumber,
+  IsObject,
   IsOptional,
   IsString,
 } from 'class-validator';
@@ -29,9 +29,9 @@ export class CreateListDto {
   @IsOptional()
   tags?: string[];
 
-  @IsJSON({ message: 'metadata 必须是 JSON 对象' })
+  @IsObject({ message: 'metadata 必须是对象' })
   @IsOptional()
-  metadata?: Record<string, any>;
+  metadata?: any;
 
   @IsNumber({}, { message: '积分必须是数字' })
   @IsOptional()

@@ -4,6 +4,10 @@
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
+/**
+ * 配置字段参考
+ * https://www.prisma.io/docs/orm/prisma-schema/overview/generators#field-reference
+ */
 generator client {
   provider     = "prisma-client"
   output       = "./generated/prisma"

@@ -37,6 +37,16 @@ const STATUS_MESSAGES = {
 
 type ResponseMode = 'simple' | 'complex';
 
+export interface PageResult<T> {
+  items: T[];
+  meta: {
+    page: number;
+    pageSize: number;
+    total: number;
+    totalPage: number;
+  };
+}
+
 /**
  * 拦截器核心方法，用于统一处理HTTP响应格式
  * @returns 返回包装后的统一响应格式数据流
@@ -88,12 +98,26 @@ export class ResponseInterceptor<T = any> implements NestInterceptor<T, any> {
           };
 
           if (this.shouldIncludeData(statusCode, data)) {
+            if (this.isPageResult(data)) {
+              return {
+                ...baseResponse,
+                data: data.items,
+                meta: data.meta,
+              };
+            }
+
             return { ...baseResponse, data };
           }
 
           return baseResponse;
         }
       }),
+    );
+  }
+
+  private isPageResult(data: any): data is PageResult<any> {
+    return (
+      data && typeof data === 'object' && Array.isArray(data.items) && data.meta && typeof data.meta.page === 'number'
     );
   }
 
