@@ -5,7 +5,7 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 /**
- * 配置字段参考
+ * client 配置字段参考
  * https://www.prisma.io/docs/orm/prisma-schema/overview/generators#field-reference
  */
 generator client {
