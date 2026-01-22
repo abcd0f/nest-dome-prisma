@@ -1,13 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
-/**
- * client 配置字段参考
- * https://www.prisma.io/docs/orm/prisma-schema/overview/generators#field-reference
- */
 generator client {
   provider     = "prisma-client"
   output       = "./generated/prisma"
@@ -21,47 +11,33 @@ datasource db {
 /// List 表
 model List {
   /// 自增主键
-  id Int @id @default(autoincrement())
-
+  id         Int      @id @default(autoincrement())
   /// 邮箱（唯一）
-  email String @unique
-
+  email      String   @unique
   /// 昵称，可选
-  name String?
-
+  name       String?
   /// 状态（用枚举约束）
-  status Status @default(ACTIVE)
-
+  status     Status   @default(ACTIVE)
   /// 标签数组（Prisma 在 PostgreSQL 原生支持数组，MySQL 可以用 JSON 存储）
-  tags Json?
-
+  tags       Json?
   /// 扩展信息（用 JSON 存储任意结构）
-  metadata Json?
-
+  metadata   Json?
   /// 积分（默认 0）
-  score Int @default(0)
-
+  score      Int      @default(0)
   /// 余额（指定 decimal 类型，避免浮点误差）
-  balance Decimal @default(0.00) @db.Decimal(10, 2)
-
+  balance    Decimal  @default(0.00) @db.Decimal(10, 2)
   /// 性别（用枚举）
-  gender Gender?
-
+  gender     Gender?
   /// 手机号，唯一，并加索引
-  phone String? @unique @db.VarChar(20)
-
+  phone      String?  @unique @db.VarChar(20)
   /// 创建时间 默认当前时间
-  createTime DateTime @default(dbgenerated("NOW()")) @db.DateTime
-
+  createTime DateTime @default(now()) @db.DateTime(0)
   /// 更新时间（由 Prisma 自动管理）
-  updateTime DateTime @default(dbgenerated("NOW() ON UPDATE NOW()")) @db.Timestamp(0)
-
+  updateTime DateTime @default(now()) @db.Timestamp(0)
   /// 软删除标记
-  deleted Boolean @default(false)
+  deleted    Boolean  @default(false)
 
-  /// 组合索引（邮箱 + 手机）
   @@index([email, phone])
-  /// 表名映射
   @@map("list")
 }
 
