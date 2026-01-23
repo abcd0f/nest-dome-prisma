@@ -1,16 +1,6 @@
-import { Gender, Status } from '@prisma/generated/prisma/enums';
+import { Gender, Status } from '@orm/generated/prisma/enums';
 
-import {
-  IsArray,
-  IsBoolean,
-  IsDecimal,
-  IsEnum,
-  IsNotEmpty,
-  IsNumber,
-  IsObject,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsArray, IsBoolean, IsEnum, IsNotEmpty, IsNumber, IsObject, IsOptional, IsString } from 'class-validator';
 
 export class CreateListDto {
   @IsString({ message: '邮箱必须是字符串' })
@@ -37,7 +27,7 @@ export class CreateListDto {
   @IsOptional()
   score?: number;
 
-  @IsDecimal({ decimal_digits: '0,2' }, { message: '余额必须是最多两位小数的数字' })
+  @IsString()
   @IsOptional()
   balance?: string;
 

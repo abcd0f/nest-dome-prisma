@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 
 import { paginate } from '@/common/utils';
 import { PrismaService } from '@/database/prisma.service';
+
 import { CreateListDto } from './dto/create-list.dto';
 
 import { UpdateListDto } from './dto/update-list.dto';
@@ -21,6 +22,17 @@ export class ListService {
       page: 1,
       pageSize: 5,
     });
+
+    // const aaa = data.items;
+
+    // const bbb = aaa.map((item: any) => {
+    //   return {
+    //     ...item,
+    //     balance: item.balance.toString(),
+    //   };
+    // });
+
+    // return bbb;
 
     return data;
   }
