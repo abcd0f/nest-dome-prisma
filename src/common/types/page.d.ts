@@ -3,15 +3,22 @@
  *
  * @template Where 查询条件的类型（通常为 Prisma 的 WhereInput）
  */
-export interface PaginationParams<Where = any, OrderBy = any> {
-  /** 当前页码，从 1 开始 @default 1 */
+/**
+ * 分页参数接口
+ */
+export interface PaginationParams<Where = any, OrderBy = any, Select = any, Omit = any> {
+  /** 当前页码，从 1 开始 */
   page?: number;
-  /** 每页数量 @default 10 */
+  /** 每页数量 */
   pageSize?: number;
   /** 查询条件 */
   where?: Where;
-  /** 排序条件 */
+  /** 排序规则 */
   orderBy?: OrderBy;
+  /** 选择返回的字段（与 omit 互斥） */
+  select?: Select;
+  /** 排除返回的字段（与 select 互斥） */
+  omit?: Omit;
 }
 
 /** 分页元信息 */
