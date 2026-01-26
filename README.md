@@ -115,3 +115,18 @@ generate 命令支持通过 @nestjs/schematics 集合生成多种文件类型。
 ```ts
 nest g res user modules
 ```
+
+## 附录
+
+### 推荐工具
+
+- **Prisma Studio**: 可视化数据库管理 (`npx prisma studio`)
+- **Postman / Apifox**: API 调试工具
+- **VS Code 插件**: Prisma, ESLint, Prettier
+
+### 相关文档
+
+- [NestJS 官方文档](https://docs.nestjs.com/)
+- [Prisma 官方文档](https://www.prisma.io/docs/)
+- [Fastify 官方文档](https://www.fastify.io/docs/latest/)
+- [class-validator 文档](https://github.com/typestack/class-validator)
