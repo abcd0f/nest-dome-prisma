@@ -16,6 +16,8 @@ import { getLocalIP } from '@/utils/localip.utils';
 
 import { AppModule } from './app.module';
 
+import { setupSwagger } from './setup-swagger';
+
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(AppModule, fastifyApp);
 
@@ -41,6 +43,8 @@ async function bootstrap() {
       maxFiles: logger.maxFiles,
     }),
   );
+
+  setupSwagger(app, config);
 
   await app.listen(port, '0.0.0.0');
 
