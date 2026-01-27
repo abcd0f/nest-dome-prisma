@@ -8,8 +8,8 @@ import { PrismaService } from '@/database/prisma.service';
 import { CreateListDto } from './dto/create-list.dto';
 import { ListResponseDto } from './dto/list-response.dto';
 
-import { UpdateListDto } from './dto/update-list.dto';
 import { ListQueryDto } from './dto/query.dto';
+import { UpdateListDto } from './dto/update-list.dto';
 
 @Injectable()
 export class ListService {

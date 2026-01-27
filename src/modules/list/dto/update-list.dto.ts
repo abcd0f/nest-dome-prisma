@@ -1,6 +1,6 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { CreateListDto } from './create-list.dto';
 import { IsNumber } from 'class-validator';
+import { CreateListDto } from './create-list.dto';
 
 export class UpdateListDto extends PartialType(CreateListDto) {
   @IsNumber()

@@ -59,7 +59,7 @@ export function toDtoList<T>(cls: ClassConstructor<T>, plainList: object[] | nul
  * 转换分页数据
  *
  * @param cls DTO 类
- * @param data 包含 items 和 meta 的分页数据
+ * @param {PageMetaDto} data 包含 items 和 meta 的分页数据
  * @returns 转换后的分页数据
  *
  * @example

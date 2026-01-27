@@ -1,16 +1,6 @@
 import { Gender, Status } from '@orm/generated/prisma/enums';
 
-import {
-  IsArray,
-  IsBoolean,
-  IsDate,
-  IsEnum,
-  IsNotEmpty,
-  IsNumber,
-  IsObject,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsArray, IsBoolean, IsEnum, IsNotEmpty, IsNumber, IsObject, IsOptional, IsString } from 'class-validator';
 
 export class CreateListDto {
   @IsString({ message: '邮箱必须是字符串' })
