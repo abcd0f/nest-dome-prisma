@@ -27,6 +27,7 @@ export default antfu(
       'style/brace-style': 'off',
       'style/quote-props': 'off',
       'style/eol-last': 'off',
+      'style/arrow-parens': 'off',
       'antfu/if-newline': 'off',
     },
   },

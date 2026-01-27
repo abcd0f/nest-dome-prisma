@@ -1,7 +1,8 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
 import { CreateListDto } from './dto/create-list.dto';
 import { UpdateListDto } from './dto/update-list.dto';
 import { ListService } from './list.service';
+import { PageQueryDto } from '@/common/dto';
 
 @Controller('list')
 export class ListController {
@@ -13,8 +14,9 @@ export class ListController {
   }
 
   @Get()
-  async findAll() {
-    return this.listService.findAll();
+  async findAll(@Query() query: PageQueryDto) {
+    const data = await this.listService.findAll(query);
+    return data;
   }
 
   @Get(':id')
@@ -22,9 +24,9 @@ export class ListController {
     return this.listService.findOne(+id);
   }
 
-  @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateListDto: UpdateListDto) {
-    return this.listService.update(+id, updateListDto);
+  @Patch()
+  async update(@Body() updateListDto: UpdateListDto) {
+    return this.listService.update(updateListDto);
   }
 
   @Delete(':id')

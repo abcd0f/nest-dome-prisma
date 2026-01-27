@@ -19,8 +19,8 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
         /* 数据库连线池数量 */
         connectionLimit: Number(process.env.DB_CONNECTION_LIMIT!),
       }),
-      log: ['query', 'info', 'warn', 'error'], // 开启查询日志，便于调试
-      errorFormat: 'pretty',
+      // log: ['query', 'info', 'warn', 'error'], // 开启查询日志，便于调试
+      // errorFormat: 'minimal',
     });
   }
 

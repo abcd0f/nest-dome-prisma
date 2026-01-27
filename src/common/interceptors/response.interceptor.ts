@@ -4,6 +4,8 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 
 import { map, Observable } from 'rxjs';
 
+import { formatToDateTime } from '@/utils/date.util';
+
 /* ===================== 常量 ===================== */
 
 const STATUS_MESSAGES: Record<number, string> = {
@@ -82,7 +84,7 @@ export class ResponseInterceptor<T = any> implements NestInterceptor<T, SimpleRe
       code,
       success,
       msg,
-      timestamp: new Date().toISOString(),
+      timestamp: formatToDateTime(new Date()),
       path,
       ...payload,
     };
