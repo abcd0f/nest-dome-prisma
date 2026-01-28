@@ -30,20 +30,7 @@ export function setupSwagger(app: INestApplication, configService: ConfigService
     .setVersion('1.0')
     .build();
 
-  // auth security
-  // documentBuilder.addSecurity(API_SECURITY_AUTH, {
-  //   description: '输入令牌（Enter the token）',
-  //   type: 'http',
-  //   scheme: 'bearer',
-  //   bearerFormat: 'JWT',
-  // });
-
   const document = SwaggerModule.createDocument(app, swaggerOptions);
-
-  // const document = SwaggerModule.createDocument(app, documentBuilder.build(), {
-  //   ignoreGlobalPrefix: true,
-  //   extraModels: [CommonEntity, ResOp, TreeResult],
-  // });
 
   SwaggerModule.setup(path, app, document, {
     swaggerOptions: {
@@ -51,13 +38,6 @@ export function setupSwagger(app: INestApplication, configService: ConfigService
     },
     jsonDocumentUrl: `/${path}/json`,
   });
-
-  // SwaggerModule.setup(`${prefix}/swagger-ui`, app, document, {
-  //   swaggerOptions: {
-  //     persistAuthorization: true,
-  //   },
-  //   customSiteTitle: 'Nest-Admin-Soybean API Docs',
-  // });
 
   return () => {
     // started log

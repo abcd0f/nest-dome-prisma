@@ -1,7 +1,7 @@
 import type { FastifyRequest } from 'fastify';
-import type { UploadFile } from './upload-dto';
-
 import { BadRequestException, Controller, HttpStatus, Post, Req } from '@nestjs/common';
+
+import { UploadFileDto } from './upload-dto';
 
 import { UploadService } from './upload.service';
 
@@ -9,6 +9,9 @@ import { UploadService } from './upload.service';
 export class UploadController {
   constructor(private readonly uploadService: UploadService) {}
 
+  /**
+   * 单文件上传
+   */
   @Post('file')
   async uploadFile(@Req() req: FastifyRequest) {
     try {
@@ -33,12 +36,15 @@ export class UploadController {
     }
   }
 
+  /**
+   * 多文件上传
+   */
   @Post('files')
   async uploadFiles(@Req() req: FastifyRequest) {
     try {
       const parts = req.parts();
 
-      const results: UploadFile[] = [];
+      const results: UploadFileDto[] = [];
 
       for await (const part of parts) {
         if (part.type !== 'file') continue;

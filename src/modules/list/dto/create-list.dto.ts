@@ -1,56 +1,76 @@
-import { ApiProperty } from '@nestjs/swagger';
-
 import { Gender, Status } from '@orm/generated/prisma/enums';
 
-import { IsArray, IsBoolean, IsEnum, IsNotEmpty, IsNumber, IsObject, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsEnum, IsNotEmpty, IsNumber, IsObject, IsOptional, IsString } from 'class-validator';
 
 export class CreateListDto {
-  @ApiProperty({ required: true, description: '邮箱' })
+  /**
+   * 邮箱
+   * @example wanglt-123@qq.com
+   */
   @IsString({ message: '邮箱必须是字符串' })
   @IsNotEmpty({ message: '邮箱不能为空' })
   email: string;
 
-  @ApiProperty({ required: true, description: '邮箱' })
+  /**
+   * 昵称
+   * @example
+   */
   @IsString({ message: '昵称必须是字符串' })
   @IsNotEmpty({ message: '昵称不能为空' })
   name: string;
 
-  @ApiProperty({ description: '状态' })
+  /**
+   * 状态
+   * @example
+   */
   @IsEnum(Status, { message: '状态必须是 ACTIVE、INACTIVE 或 BANNED' })
   @IsOptional()
   status?: Status;
 
-  @ApiProperty({ description: '标签' })
+  /**
+   * 标签
+   * @example
+   */
   @IsArray({ message: '标签必须是数组' })
   @IsOptional()
   tags?: string[];
 
-  @ApiProperty({ description: 'metadata' })
+  /**
+   * json对象
+   * @example
+   */
   @IsObject({ message: 'metadata 必须是对象' })
   @IsOptional()
   metadata?: any;
 
-  @ApiProperty({ description: '积分' })
+  /**
+   * 积分
+   * @example 80
+   */
   @IsNumber({}, { message: '积分必须是数字' })
   @IsOptional()
   score?: number;
 
-  @ApiProperty({ description: '价格' })
+  /**
+   * 金额
+   * @example 70.5
+   */
   @IsString()
   @IsOptional()
   balance?: string;
 
-  @ApiProperty({ description: '性别' })
+  /**
+   * 性别
+   */
   @IsEnum(Gender, { message: '性别必须是 MALE、FEMALE 或 OTHER' })
   @IsOptional()
   gender?: Gender;
 
-  @ApiProperty({ description: '手机号' })
+  /**
+   * 手机号
+   * 458999874
+   */
   @IsString({ message: '手机号必须是字符串' })
   @IsOptional()
   phone?: string;
-
-  @IsBoolean({ message: 'deleted 必须是布尔值' })
-  @IsOptional()
-  deleted?: boolean;
 }

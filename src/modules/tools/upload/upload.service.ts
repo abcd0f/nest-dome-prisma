@@ -4,14 +4,14 @@ import dayjs from 'dayjs';
 
 import { fileRename, getExtname, getFilePath, getFileType, getSize, saveLocalFileByStream } from '@/utils/file.util';
 
-import { UploadFile, UploadInput } from './upload-dto';
+import { UploadFileDto, UploadInput } from './upload-dto';
 
 @Injectable()
 export class UploadService {
   /**
    * 单文件上传（Fastify Stream 版本）
    */
-  async fileUpload(file: UploadInput): Promise<UploadFile> {
+  async fileUpload(file: UploadInput): Promise<UploadFileDto> {
     const { filename, stream } = file;
 
     // 原始文件名
