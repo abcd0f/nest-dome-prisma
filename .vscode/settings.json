@@ -33,7 +33,7 @@
     "*.env": "$(capture).env.*",
     "README.md": "README*,CHANGELOG*,LICENSE,CNAME",
     "package.json": "pnpm-lock.yaml,pnpm-workspace.yaml,.gitignore,.npmrc,.node-version,.git*",
-    "eslint.config.mjs": ".eslintignore,.prettierignore,.prettierrc,.editorconfig,nest-cli.json",
+    "eslint.config.mjs": ".eslintignore,.prettierignore,.prettierrc,.editorconfig,nest-cli.json,ecosystem.config.js",
     "tailwind.config.mjs": "postcss.*"
   }
 }
