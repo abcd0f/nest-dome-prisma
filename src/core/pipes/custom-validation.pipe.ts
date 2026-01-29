@@ -1,16 +1,20 @@
 import { BadRequestException, ValidationError, ValidationPipe, ValidationPipeOptions } from '@nestjs/common';
 
 /**
+ * 验证错误详情
+ */
+interface ValidationErrorDetail {
+  readonly field: string;
+  readonly messages: readonly string[];
+}
+
+/**
  * 验证错误响应格式
  */
 interface ValidationErrorResponse {
   code: number;
   msg: string;
-  errors: Array<{
-    field: string;
-    messages: string[];
-  }>;
-  timestamp?: string;
+  errors: ValidationErrorDetail[];
 }
 
 /**
@@ -20,7 +24,7 @@ interface ValidationErrorResponse {
  * - 自动数据类型转换
  * - 白名单过滤，移除未定义的属性
  * - 禁止非白名单属性通过
- * - 结构化错误信息返回
+ * - 结构化错误信息返回（支持嵌套对象）
  * - 支持隐式类型转换
  */
 export class CustomValidationPipe extends ValidationPipe {
@@ -57,35 +61,19 @@ export class CustomValidationPipe extends ValidationPipe {
    * @returns BadRequestException 异常实例
    */
   private static formatValidationErrors(errors: ValidationError[]): BadRequestException {
-    const formattedErrors = errors.map((error) => CustomValidationPipe.extractErrorDetails(error));
+    const formattedErrors = errors.flatMap((error) => CustomValidationPipe.extractErrorDetails(error));
 
     const response: ValidationErrorResponse = {
       code: 400,
       msg: '请求参数验证失败',
       errors: formattedErrors,
-      timestamp: new Date().toISOString(),
     };
 
     return new BadRequestException(response);
   }
 
   /**
-   * 提取单个错误的详细信息
-   * @param error - 单个验证错误
-   * @returns 格式化后的错误详情
-   */
-  private static extractErrorDetails(error: ValidationError): {
-    field: string;
-    messages: string[];
-  } {
-    return {
-      field: error.property,
-      messages: error.constraints ? Object.values(error.constraints) : ['未知验证错误'],
-    };
-  }
-
-  /**
-   * 简化版错误格式化（可选）
+   * 简化版错误格式化
    * 返回单一错误消息字符串而非结构化数据
    */
   // private static formatSimpleErrors(errors: ValidationError[]): BadRequestException {
@@ -94,7 +82,33 @@ export class CustomValidationPipe extends ValidationPipe {
   //   return new BadRequestException({
   //     code: 400,
   //     msg: errorMessage || '请求参数验证失败',
-  //     timestamp: new Date().toISOString(),
   //   });
   // }
+
+  /**
+   * 递归提取错误的详细信息（支持嵌套对象）
+   * @param error - 单个验证错误
+   * @param parentField - 父级字段路径
+   * @returns 格式化后的错误详情数组
+   */
+  private static extractErrorDetails(error: ValidationError, parentField = ''): ValidationErrorDetail[] {
+    const field = parentField ? `${parentField}.${error.property}` : error.property;
+
+    const results: ValidationErrorDetail[] = [];
+
+    if (error.constraints) {
+      results.push({
+        field,
+        messages: Object.values(error.constraints),
+      });
+    }
+
+    if (error.children?.length) {
+      for (const child of error.children) {
+        results.push(...CustomValidationPipe.extractErrorDetails(child, field));
+      }
+    }
+
+    return results;
+  }
 }
