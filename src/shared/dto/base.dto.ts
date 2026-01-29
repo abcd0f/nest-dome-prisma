@@ -2,7 +2,7 @@ import { Expose, Transform, Type } from 'class-transformer';
 
 import { IsEnum, IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
 
-import { DateFormat } from '@/common/decorators';
+import { DateFormat } from '@/core/decorators';
 
 /** 排序方向枚举 */
 export enum SortOrder {

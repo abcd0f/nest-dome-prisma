@@ -1,7 +1,7 @@
 import type { Readable } from 'node:stream';
 import { Expose } from 'class-transformer';
 import { IsString } from 'class-validator';
-import { DateFormat } from '@/common/decorators';
+import { DateFormat } from '@/core/decorators';
 
 export class UploadFileDto {
   /** 原始文件名 */

@@ -7,9 +7,9 @@ import { NestFactory } from '@nestjs/core';
 import { NestFastifyApplication } from '@nestjs/platform-fastify';
 
 import { fastifyApp, setFastifyApp } from '@/common/adapters/fastify.adapter';
-import { HttpExceptionFilter } from '@/common/filters';
-import { CustomLogger, ResponseInterceptor } from '@/common/interceptors';
-import { CustomValidationPipe } from '@/common/pipes';
+import { CustomValidationPipe } from '@/core/pipes';
+import { HttpExceptionFilter } from '@/core/filters';
+import { CustomLogger, ResponseInterceptor } from '@/core/interceptors';
 
 import { getCorsOption } from '@/utils/cors.utils';
 import { getLocalIP } from '@/utils/localip.utils';

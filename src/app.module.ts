@@ -3,8 +3,8 @@ import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 
-import { TimeoutInterceptor } from '@/common/interceptors';
 import config from '@/config';
+import { TimeoutInterceptor } from '@/core/interceptors';
 
 import { PrismaModule } from '@/database/prisma.module';
 
