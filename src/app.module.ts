@@ -12,6 +12,8 @@ import { SharedModule } from '@/shared/shared.module';
 
 import { ListModule } from './modules/list/list.module';
 
+import { MonitorModule } from './modules/monitor/monitor.module';
+
 import { ToolsModule } from './modules/tools/tools.module';
 
 @Module({
@@ -35,6 +37,7 @@ import { ToolsModule } from './modules/tools/tools.module';
     SharedModule,
     ListModule,
     ToolsModule,
+    MonitorModule,
   ],
   controllers: [],
   providers: [

@@ -28,6 +28,7 @@ export default antfu(
       'style/quote-props': 'off',
       'style/eol-last': 'off',
       'style/arrow-parens': 'off',
+      'style/operator-linebreak': 'off',
       'antfu/if-newline': 'off',
     },
   },

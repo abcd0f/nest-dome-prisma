@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { PageQueryDto } from '@/shared/dto';
 import { CreateListDto } from './dto/create-list.dto';
+import { ListQueryDto } from './dto/query.dto';
 import { UpdateListDto } from './dto/update-list.dto';
 import { ListService } from './list.service';
 
@@ -17,12 +17,14 @@ export class ListController {
   /** 新增 */
   @Post()
   async create(@Body() createListDto: CreateListDto) {
+    console.log('createListDto', createListDto);
+
     return this.listService.create(createListDto);
   }
 
   /** 获取列表 */
   @Get()
-  async findAll(@Query() query: PageQueryDto) {
+  async findAll(@Query() query: ListQueryDto) {
     const data = await this.listService.findAll(query);
     return data;
   }
