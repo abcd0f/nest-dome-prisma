@@ -7,9 +7,9 @@ import { NestFactory } from '@nestjs/core';
 import { NestFastifyApplication } from '@nestjs/platform-fastify';
 
 import { fastifyApp, setFastifyApp } from '@/common/adapters/fastify.adapter';
-import { CustomValidationPipe } from '@/core/pipes';
 import { HttpExceptionFilter } from '@/core/filters';
 import { CustomLogger, ResponseInterceptor } from '@/core/interceptors';
+import { CustomValidationPipe } from '@/core/pipes';
 
 import { getCorsOption } from '@/utils/cors.utils';
 import { getLocalIP } from '@/utils/localip.utils';
@@ -49,6 +49,9 @@ async function bootstrap() {
   await app.listen(port, '0.0.0.0');
 
   const localIP = getLocalIP();
-  console.log(`\n🟢 启动成功:\n   👉 http://${localIP}:${port}\n`);
+  console.log(`
+    \n🟢 启动成功:
+    \n🚀 服务地址: http://${localIP}:${port}
+  `);
 }
 bootstrap();

@@ -1,4 +1,4 @@
-import { INestApplication, Logger } from '@nestjs/common';
+import { INestApplication } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
@@ -17,11 +17,9 @@ const API_INFO = {
 
 export function setupSwagger(app: INestApplication, configService: ConfigService<ConfigKeyPaths, true>) {
   const { name } = configService.get<IAppConfig>('app')!;
-  const { enable, path, serverUrl } = configService.get<ISwaggerConfig>('swagger')!;
+  const { enable, path } = configService.get<ISwaggerConfig>('swagger')!;
 
   if (!enable) return;
-
-  const swaggerPath = `${serverUrl}/${path}`;
 
   const swaggerOptions = new DocumentBuilder()
     .setTitle(name)
@@ -38,11 +36,4 @@ export function setupSwagger(app: INestApplication, configService: ConfigService
     },
     jsonDocumentUrl: `/${path}/json`,
   });
-
-  return () => {
-    // started log
-    const logger = new Logger('SwaggerModule');
-    logger.log(`Swagger UI: ${swaggerPath}`);
-    logger.log(`Swagger JSON: ${swaggerPath}/json`);
-  };
 }
