@@ -67,6 +67,11 @@ function createPinoLogger(options: PinoLoggerOptions = {}): Logger {
     {
       level, // 必须是最低级别
       timestamp: pino.stdTimeFunctions.isoTime,
+      formatters: {
+        level(label) {
+          return { level: label.toUpperCase() }; // 显示 INFO / ERROR / DEBUG
+        },
+      },
     },
     multistream(streams),
   );
