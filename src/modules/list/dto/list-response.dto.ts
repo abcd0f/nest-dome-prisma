@@ -1,6 +1,6 @@
 import { Gender, Status } from '@orm/generated/prisma/enums';
 import { Expose } from 'class-transformer';
-import { BaseEntityDto } from '@/shared/dto';
+import { BaseEntityDto } from '@/common/dto';
 
 export class ListResponseDto extends BaseEntityDto {
   /** id */

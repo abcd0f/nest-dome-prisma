@@ -1,5 +1,5 @@
 import { ClassConstructor, plainToInstance } from 'class-transformer';
-import { PageMetaDto } from '@/shared/dto';
+import { PageMetaDto } from './base.dto';
 
 /**
  * 序列化选项

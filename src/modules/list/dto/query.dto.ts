@@ -1,3 +1,3 @@
-import { PageQueryDto } from '@/shared/dto';
+import { PageQueryDto } from '@/common/dto';
 
 export class ListQueryDto extends PageQueryDto {}
