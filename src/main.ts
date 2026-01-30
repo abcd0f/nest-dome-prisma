@@ -7,11 +7,11 @@ import { NestFactory } from '@nestjs/core';
 import { NestFastifyApplication } from '@nestjs/platform-fastify';
 
 import { fastifyApp, setFastifyApp } from '@/common/adapters/fastify.adapter';
+import { PinoLogger } from '@/common/logger/pino.logger';
 import { HttpExceptionFilter } from '@/core/filters';
 import { ResponseInterceptor } from '@/core/interceptors';
-import { CustomValidationPipe } from '@/core/pipes';
 
-import { PinoLogger } from '@/shared/logger/pino.logger';
+import { CustomValidationPipe } from '@/core/pipes';
 
 import { getCorsOption } from '@/utils/cors.utils';
 
