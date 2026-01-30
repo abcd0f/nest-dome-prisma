@@ -8,14 +8,16 @@ import { NestFastifyApplication } from '@nestjs/platform-fastify';
 
 import { fastifyApp, setFastifyApp } from '@/common/adapters/fastify.adapter';
 import { HttpExceptionFilter } from '@/core/filters';
-import { CustomLogger, ResponseInterceptor } from '@/core/interceptors';
+import { ResponseInterceptor } from '@/core/interceptors';
 import { CustomValidationPipe } from '@/core/pipes';
 
+import { PinoLogger } from '@/shared/logger/pino.logger';
+
 import { getCorsOption } from '@/utils/cors.utils';
+
 import { getLocalIP } from '@/utils/localip.utils';
 
 import { AppModule } from './app.module';
-
 import { setupSwagger } from './setup-swagger';
 
 async function bootstrap() {
@@ -25,7 +27,7 @@ async function bootstrap() {
 
   // 获取env变量
   const config = app.get(ConfigService<ConfigKeyPaths, true>);
-  const { port, prefix, logger, resmode } = config.get('app', { infer: true });
+  const { port, prefix, resmode, logger } = config.get('app', { infer: true });
 
   // 设置静态资源目录
   app.useStaticAssets({ root: path.join(__dirname, '..', 'public') });
@@ -37,10 +39,12 @@ async function bootstrap() {
   app.useGlobalInterceptors(new ResponseInterceptor(resmode as any));
   app.useGlobalFilters(new HttpExceptionFilter());
   app.enableCors(getCorsOption());
+
   app.useLogger(
-    new CustomLogger({
-      level: logger.level,
-      maxFiles: logger.maxFiles,
+    new PinoLogger({
+      level: logger.level as any,
+      logDir: logger.dir,
+      enableConsole: logger.showConsole,
     }),
   );
 

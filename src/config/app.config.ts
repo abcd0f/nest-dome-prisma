@@ -1,6 +1,6 @@
 import { ConfigType, registerAs } from '@nestjs/config';
 
-import { env, envNumber } from '@/utils/globalenv.utils';
+import { env, envBoolean, envNumber } from '@/utils/globalenv.utils';
 
 export const appRegToken = 'app';
 
@@ -18,8 +18,10 @@ export const AppConfig = registerAs(appRegToken, () => ({
   logger: {
     /* 日志级别 */
     level: env('LOGGER_LEVEL'),
-    /* 日志文件最大数量 */
-    maxFiles: env('LOGGER_MAX_FILES'),
+    /* 日志目录 */
+    dir: env('LOGGER_DIR'),
+    /* 是否在控制台显示 */
+    showConsole: envBoolean('LOGGER_CONSOLE'),
   },
 }));
 
