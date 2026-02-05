@@ -15,7 +15,7 @@ import { CustomValidationPipe } from '@/core/pipes';
 
 import { getCorsOption } from '@/utils/cors.utils';
 
-import { getLocalIP } from '@/utils/localip.utils';
+import { getLocalIPs } from '@/utils/localip.utils';
 
 import { AppModule } from './app.module';
 import { setupSwagger } from './setup-swagger';
@@ -52,10 +52,20 @@ async function bootstrap() {
 
   await app.listen(port, '0.0.0.0');
 
-  const localIP = getLocalIP();
-  console.log(`
-    \n🟢 启动成功:
-    \n🚀 服务地址: http://${localIP}:${port}
-  `);
+  const localIPs = getLocalIPs();
+
+  console.log(`\n🟢 启动成功:`);
+  console.log(`\n📍 本地访问: http://localhost:${port}`);
+
+  if (localIPs.length > 0) {
+    console.log(`\n🌐 网络访问:`);
+    localIPs.forEach((ip) => {
+      console.log(`   http://${ip}:${port}`);
+    });
+  } else {
+    console.log(`\n⚠️  未检测到可用网络接口`);
+  }
+
+  console.log(); // 空行美化
 }
 bootstrap();
