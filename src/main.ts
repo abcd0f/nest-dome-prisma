@@ -65,7 +65,6 @@ async function bootstrap() {
   } else {
     console.log(`\n⚠️  未检测到可用网络接口`);
   }
-
-  console.log(); // 空行美化
 }
+
 bootstrap();
