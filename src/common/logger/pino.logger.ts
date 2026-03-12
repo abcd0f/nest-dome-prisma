@@ -1,109 +1,86 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { LoggerService } from '@nestjs/common';
-import pino, { Logger, multistream } from 'pino';
+import pino from 'pino';
 
-/**
- * Pino Logger 配置
- */
-interface PinoLoggerOptions {
-  /**
-   * 是否输出到控制台
-   * @default true
-   */
+import { isDev } from '@/utils/globalenv.utils';
+
+export interface PinoLoggerOptions {
   enableConsole?: boolean;
-
-  /**
-   * 日志输出目录
-   * @default process.cwd()/logs
-   */
   logDir?: string;
-
-  /**
-   * 最低日志级别
-   * @default 'debug'
-   */
   level?: pino.Level;
+  maxFiles?: number;
 }
 
-/**
- * 确保目录存在
- */
-function ensureDir(dir: string) {
+function ensureDir(dir: string): void {
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
   }
 }
 
-/**
- * 创建底层 Pino Logger
- */
-function createPinoLogger(options: PinoLoggerOptions = {}): Logger {
-  const { enableConsole = true, logDir = path.resolve(process.cwd(), 'logs'), level = 'debug' } = options;
-
-  ensureDir(logDir);
-
-  const streams: Parameters<typeof multistream>[0] = [];
-
-  if (enableConsole) {
-    streams.push({
-      level,
-      stream: process.stdout,
-    });
-  }
-
-  streams.push(
-    {
-      level: 'info',
-      stream: fs.createWriteStream(path.join(logDir, 'info.log'), { flags: 'a' }),
-    },
-    {
-      level: 'error',
-      stream: fs.createWriteStream(path.join(logDir, 'error.log'), { flags: 'a' }),
-    },
-  );
-
-  return pino(
-    {
-      level, // 必须是最低级别
-      timestamp: pino.stdTimeFunctions.isoTime,
-      formatters: {
-        level(label) {
-          return { level: label.toUpperCase() }; // 显示 INFO / ERROR / DEBUG
-        },
-      },
-    },
-    multistream(streams),
-  );
+function getLogFileName(level: string): string {
+  const date = new Date().toISOString().split('T')[0];
+  return `${level}-${date}.log`;
 }
 
-/**
- * NestJS LoggerService 适配器
- */
+function createFileDestination(logDir: string, level: string) {
+  ensureDir(logDir);
+  const fileName = getLogFileName(level);
+  const filePath = path.join(logDir, fileName);
+  return pino.destination({ dest: filePath, flags: 'a' });
+}
+
+function createPinoLogger(options: PinoLoggerOptions = {}): pino.Logger {
+  const { enableConsole, logDir = path.resolve(process.cwd(), 'logs'), level = isDev ? 'debug' : 'info' } = options;
+
+  const showConsole = enableConsole !== false;
+  const appFileDestination = createFileDestination(logDir, 'app');
+  const errorFileDestination = createFileDestination(logDir, 'error');
+
+  const baseOptions: pino.LoggerOptions = {
+    level,
+    timestamp: pino.stdTimeFunctions.isoTime,
+    formatters: {
+      level: (label: string) => ({ level: label.toUpperCase() }),
+    },
+    serializers: {
+      err: pino.stdSerializers.err,
+    },
+  };
+
+  const streams: pino.StreamEntry[] = [
+    ...(showConsole ? [{ level: 'info' as pino.Level, stream: process.stdout } as pino.StreamEntry] : []),
+    { level: 'info' as pino.Level, stream: appFileDestination },
+    { level: 'error' as pino.Level, stream: errorFileDestination },
+  ];
+
+  return pino(baseOptions, pino.multistream(streams));
+}
+
 export class PinoLogger implements LoggerService {
-  private readonly logger: Logger;
+  private readonly logger: pino.Logger;
 
   constructor(options?: PinoLoggerOptions) {
     this.logger = createPinoLogger(options);
   }
 
-  log(message: any, context?: string) {
+  log(message: string, context?: string): void {
     this.logger.info({ context }, message);
   }
 
-  error(message: any, trace?: string, context?: string) {
+  error(message: string, trace?: string, context?: string): void {
     this.logger.error({ context, trace }, message);
   }
 
-  warn(message: any, context?: string) {
+  warn(message: string, context?: string): void {
     this.logger.warn({ context }, message);
   }
 
-  debug(message: any, context?: string) {
+  debug(message: string, context?: string): void {
     this.logger.debug({ context }, message);
   }
 
-  verbose(message: any, context?: string) {
+  verbose(message: string, context?: string): void {
     this.logger.trace({ context }, message);
   }
 }

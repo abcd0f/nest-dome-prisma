@@ -40,13 +40,12 @@ async function bootstrap() {
   app.useGlobalFilters(new HttpExceptionFilter());
   app.enableCors(getCorsOption());
 
-  app.useLogger(
-    new PinoLogger({
-      level: logger.level as any,
-      logDir: logger.dir,
-      enableConsole: logger.showConsole,
-    }),
-  );
+  const pinoLogger = new PinoLogger({
+    level: logger.level as any,
+    logDir: logger.dir,
+    enableConsole: logger.showConsole,
+  });
+  app.useLogger(pinoLogger);
 
   setupSwagger(app, config);
 
