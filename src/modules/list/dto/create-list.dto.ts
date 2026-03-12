@@ -5,7 +5,6 @@ import { IsArray, IsEnum, IsNotEmpty, IsNumber, IsObject, IsOptional, IsString }
 export class CreateListDto {
   /**
    * 邮箱
-   * @example wanglt-123@qq.com
    */
   @IsString({ message: '邮箱必须是字符串' })
   @IsNotEmpty({ message: '邮箱不能为空' })
