@@ -89,7 +89,7 @@ export class DiskInfoDto {
 
   /** 总大小 */
   @Expose()
-  tota?: string;
+  total?: string;
 
   /** 已用大小 */
   @Expose()

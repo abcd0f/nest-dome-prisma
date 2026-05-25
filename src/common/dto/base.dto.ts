@@ -15,7 +15,7 @@ export enum SortOrder {
  *
  * @description 提供标准的分页参数，所有需要分页的接口都应继承此类
  * 统一分页参数命名规范：
- * - pageNum: 当前页码（从1开始）
+ * - page: 当前页码（从1开始）
  * - pageSize: 每页条数（默认10，最大100）
  * - orderByColumn: 排序字段
  * - isAsc: 排序方向（asc/desc）
@@ -38,7 +38,6 @@ export class PageQueryDto {
   page?: number = 1;
 
   /** 每页条数 */
-  @IsOptional()
   @IsOptional()
   @Type(() => Number)
   @IsInt()
