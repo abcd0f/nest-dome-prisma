@@ -97,7 +97,10 @@ export class UploadController {
       // 否则格式化为统一格式
       return new BadRequestException({
         code: error.getStatus(),
-        msg: typeof response === 'string' ? response : (response as any).msg || (response as any).message || defaultMessage,
+        msg:
+          typeof response === 'string'
+            ? response
+            : (response as any).msg || (response as any).message || defaultMessage,
       });
     }
 
