@@ -6,6 +6,8 @@ import { Injectable } from '@nestjs/common';
 
 const execPromise = promisify(exec);
 
+const WHITESPACE_REGEX = /\s+/;
+
 /**
  * CPU 统计信息类型
  */
@@ -80,7 +82,7 @@ export class ServerService {
     const disks: DiskInfo[] = [];
 
     for (const line of lines) {
-      const parts = line.trim().split(/\s+/);
+      const parts = line.trim().split(WHITESPACE_REGEX);
       if (parts.length >= 3) {
         const [caption, filesystem, freespace, size] = parts;
 
@@ -114,7 +116,7 @@ export class ServerService {
     const disks: DiskInfo[] = [];
 
     for (const line of lines) {
-      const parts = line.trim().split(/\s+/);
+      const parts = line.trim().split(WHITESPACE_REGEX);
 
       if (parts.length >= 6) {
         const [filesystem, totalBlocks, usedBlocks, freeBlocks, , mounted] = parts;
