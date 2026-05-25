@@ -85,8 +85,7 @@ function normalizePayload(status: number, res: unknown): ErrorPayload {
 
     const resolvedMsg = msg ?? (Array.isArray(message) ? message.join('; ') : message) ?? error ?? '请求失败';
 
-    const resolvedCode
-      = typeof code === 'number' ? code : typeof statusCode === 'number' ? statusCode : status;
+    const resolvedCode = typeof code === 'number' ? code : typeof statusCode === 'number' ? statusCode : status;
 
     return { code: resolvedCode, msg: resolvedMsg, ...rest };
   }
