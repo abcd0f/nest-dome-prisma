@@ -5,45 +5,45 @@ import { BaseEntityDto } from '@/common/dto';
 export class ListResponseDto extends BaseEntityDto {
   /** id */
   @Expose()
-  id: number;
+  id: number | undefined;
 
   /** 邮箱 */
   @Expose()
-  email: string;
+  email: string | undefined;
 
   /** 昵称 */
   @Expose()
-  name: string;
+  name: string | undefined;
 
   /** 状态 */
   @Expose()
-  status: Status;
+  status: Status | undefined;
 
   /** 标签 */
   @Expose()
-  tags: string[];
+  tags: string[] | undefined;
 
   /** 元数据 */
   @Expose()
-  metadata: any;
+  metadata: any | undefined;
 
   /** 积分 */
   @Expose()
-  score: number;
+  score: number | undefined;
 
   /** 金额 */
   @Expose()
-  balance: string;
+  balance: string | undefined;
 
   /** 性别 */
   @Expose()
-  gender: Gender;
+  gender: Gender | undefined;
 
   /** 手机 */
   @Expose()
-  phone: string;
+  phone: string | undefined;
 
   /** 删除状态 */
   @Expose()
-  deleted: boolean;
+  deleted: boolean | undefined;
 }

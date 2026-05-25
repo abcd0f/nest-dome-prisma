@@ -62,29 +62,29 @@ export class PageMetaDto {
   /** 当前页码 */
   @Expose()
   @IsEnum(SortOrder)
-  page: number;
+  page!: number;
 
   /** 每页条数 */
   @Expose()
-  pageSize: number;
+  pageSize!: number;
 
   /** 总记录数 */
   @Expose()
-  total: number;
+  total!: number;
 
   /** 总页数 */
   @Expose()
-  totalPage: number;
+  totalPage!: number;
 }
 
 export class PageResponseDto<T> {
   /** 数据列表 */
   @Expose()
-  items: T[];
+  items!: T[];
 
   /** 分页信息 */
   @Expose()
-  meta: PageMetaDto;
+  meta!: PageMetaDto;
 }
 
 /**

@@ -7,33 +7,33 @@ export class UploadFileDto {
   /** 原始文件名 */
   @IsString()
   @Expose()
-  fileName: string;
+  fileName!: string;
 
   /** 重命名后的文件名 */
   @IsString()
   @Expose()
-  name: string;
+  name!: string;
 
   /** 文件存储路径 */
   @IsString()
   @Expose()
-  path: string;
+  path!: string;
 
   /** 文件类型，例如 image、video、document */
   @IsString()
   @Expose()
-  type: string;
+  type!: string;
 
   /** 文件大小，如 2.3MB */
   @IsString()
   @Expose()
-  size: string;
+  size!: string;
 
   /** 上传日期，格式 YYYY-MM-DD */
   @IsString()
   @Expose()
   @DateFormat()
-  currentDate: string;
+  currentDate!: string;
 }
 
 export interface UploadInput {

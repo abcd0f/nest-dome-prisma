@@ -15,6 +15,7 @@
         "prisma/*"
       ]
     },
+    "ignoreDeprecations": "6.0",
     "resolvePackageJsonExports": true,
     "strictBindCallApply": false,
     "strictNullChecks": true,

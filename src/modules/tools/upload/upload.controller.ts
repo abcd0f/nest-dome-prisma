@@ -20,7 +20,7 @@ export class UploadController {
       if (!file) {
         throw new BadRequestException({
           code: HttpStatus.BAD_REQUEST,
-          message: '未检测到上传文件',
+          msg: '未检测到上传文件',
         });
       }
 
@@ -61,7 +61,7 @@ export class UploadController {
       if (results.length === 0) {
         throw new BadRequestException({
           code: HttpStatus.BAD_REQUEST,
-          message: '未检测到上传文件',
+          msg: '未检测到上传文件',
         });
       }
 
@@ -81,7 +81,7 @@ export class UploadController {
     if (error?.code?.startsWith('FST_')) {
       return new BadRequestException({
         code: error.statusCode || HttpStatus.INTERNAL_SERVER_ERROR,
-        message: error.message || '服务器内部错误',
+        msg: error.message || '服务器内部错误',
       });
     }
 
@@ -89,22 +89,22 @@ export class UploadController {
     if (error instanceof BadRequestException) {
       const response = error.getResponse();
 
-      // 如果已经是正确格式，直接返回
-      if (typeof response === 'object' && 'code' in response && 'message' in response) {
+      // 如果已经是正确格式,直接返回
+      if (typeof response === 'object' && 'code' in response && 'msg' in response) {
         return error;
       }
 
       // 否则格式化为统一格式
       return new BadRequestException({
         code: error.getStatus(),
-        message: typeof response === 'string' ? response : (response as any).message || defaultMessage,
+        msg: typeof response === 'string' ? response : (response as any).msg || (response as any).message || defaultMessage,
       });
     }
 
     // 处理其他类型的错误
     return new BadRequestException({
       code: HttpStatus.BAD_REQUEST,
-      message: error?.message || defaultMessage,
+      msg: error?.message || defaultMessage,
     });
   }
 }

@@ -1,36 +1,36 @@
-import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { PrismaClient } from '@orm/generated/prisma/client';
 import { PrismaMariaDb } from '@prisma/adapter-mariadb';
-import 'dotenv/config';
+
+import { ConfigKeyPaths, IDatabaseConfig } from '@/config';
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
-  constructor() {
+  private readonly logger = new Logger(PrismaService.name);
+
+  constructor(configService: ConfigService<ConfigKeyPaths, true>) {
+    const db = configService.get<IDatabaseConfig>('database', { infer: true })!;
+
     super({
       adapter: new PrismaMariaDb({
-        /* 数据库地址  */
-        host: process.env.DB_HOST!,
-        /* 数据库密码 */
-        user: process.env.DB_USERNAME!,
-        /* 数据库名称 */
-        password: process.env.DB_PASSWORD!,
-        /* 数据库端口 */
-        database: process.env.DB_DATABASE!,
-        /* 数据库连线池数量 */
-        connectionLimit: Number(process.env.DB_CONNECTION_LIMIT!),
+        host: db.host,
+        port: db.port,
+        user: db.username,
+        password: db.password,
+        database: db.database,
+        connectionLimit: db.connectionLimit,
       }),
-      // log: ['query', 'info', 'warn', 'error'], // 开启查询日志，便于调试
-      // errorFormat: 'minimal',
     });
   }
 
   async onModuleInit() {
     await this.$connect();
-    console.log('数据库已连接');
+    this.logger.log('数据库已连接');
   }
 
   async onModuleDestroy() {
     await this.$disconnect();
-    console.log('数据库断开连接');
+    this.logger.log('数据库已断开');
   }
 }
