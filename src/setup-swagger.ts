@@ -44,7 +44,6 @@ export function setupSwagger(app: INestApplication, configService: ConfigService
     .setTitle(name)
     .setDescription(API_INFO.description)
     .setVersion(API_INFO.version)
-    .setVersion('1.0')
     .build();
 
   const document = SwaggerModule.createDocument(app, swaggerOptions);

@@ -11,6 +11,24 @@ interface ErrorPayload {
   [key: string]: any;
 }
 
+/**
+ * Fastify 插件抛出的错误形态(如 @fastify/multipart 的 FST_REQ_FILE_TOO_LARGE 等)
+ */
+interface FastifyError {
+  code: string;
+  message: string;
+  statusCode?: number;
+}
+
+function isFastifyError(error: unknown): error is FastifyError {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    typeof (error as { code?: unknown }).code === 'string' &&
+    (error as { code: string }).code.startsWith('FST_')
+  );
+}
+
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
   private readonly logger = new Logger(HttpExceptionFilter.name);
@@ -41,7 +59,16 @@ export class HttpExceptionFilter implements ExceptionFilter {
       return response.status(status).send({ code: status, msg });
     }
 
-    /** 3️⃣ Prisma 查询参数校验异常 */
+    /** 3️⃣ Fastify 插件抛出的特定错误(如 multipart 文件超限等) */
+    if (isFastifyError(exception)) {
+      const status = typeof exception.statusCode === 'number' ? exception.statusCode : HttpStatus.BAD_REQUEST;
+      const msg = exception.message || '请求失败';
+
+      this.logger.error({ code: exception.code, msg });
+      return response.status(status).send({ code: status, msg });
+    }
+
+    /** 4️⃣ Prisma 查询参数校验异常 */
     if (exception instanceof Prisma.PrismaClientValidationError) {
       this.logger.error(exception.message);
       return response.status(HttpStatus.BAD_REQUEST).send({
@@ -50,7 +77,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       });
     }
 
-    /** 4️⃣ Prisma 连接初始化异常 */
+    /** 5️⃣ Prisma 连接初始化异常 */
     if (exception instanceof Prisma.PrismaClientInitializationError) {
       this.logger.error(exception);
       return response.status(HttpStatus.SERVICE_UNAVAILABLE).send({
@@ -59,7 +86,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       });
     }
 
-    /** 5️⃣ 其他未知系统异常 */
+    /** 6️⃣ 其他未知系统异常 */
     this.logger.error(exception);
     return response.status(HttpStatus.INTERNAL_SERVER_ERROR).send({
       code: HttpStatus.INTERNAL_SERVER_ERROR,

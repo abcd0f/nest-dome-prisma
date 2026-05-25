@@ -1,10 +1,12 @@
-import { exec } from 'node:child_process';
-import os, { networkInterfaces } from 'node:os';
+import { execFile } from 'node:child_process';
+import os from 'node:os';
 import path from 'node:path';
 import { promisify } from 'node:util';
 import { Injectable } from '@nestjs/common';
 
-const execPromise = promisify(exec);
+import { getLocalIP } from '@/utils/localip.utils';
+
+const execFileAsync = promisify(execFile);
 
 const WHITESPACE_REGEX = /\s+/;
 
@@ -31,27 +33,30 @@ export interface DiskInfo {
   usage: string;
 }
 
+/**
+ * PowerShell Get-CimInstance Win32_LogicalDisk 返回的单条记录
+ */
+interface PsLogicalDisk {
+  DeviceID: string;
+  FileSystem: string | null;
+  FreeSpace: number | null;
+  Size: number | null;
+}
+
 @Injectable()
 export class ServerService {
   async getInfo() {
-    // 获取CPU信息
     const cpu = this.getCpuInfo();
     const mem = this.getMemInfo();
     const sys = {
       computerName: os.hostname(),
-      computerIp: this.getServerIP(),
+      computerIp: getLocalIP(),
       userDir: path.resolve(__dirname, '..', '..', '..', '..'),
       osName: os.platform(),
       osArch: os.arch(),
     };
     const sysFiles = await this.getDiskStatus();
-    const data = {
-      cpu,
-      mem,
-      sys,
-      sysFiles,
-    };
-    return data;
+    return { cpu, mem, sys, sysFiles };
   }
 
   async getDiskStatus(): Promise<DiskInfo[]> {
@@ -73,34 +78,40 @@ export class ServerService {
   }
 
   /**
-   * 获取 Windows 磁盘信息
+   * 获取 Windows 磁盘信息(使用 PowerShell CIM,替代已弃用的 wmic)
    */
   private async getWindowsDiskInfo(): Promise<DiskInfo[]> {
-    const { stdout } = await execPromise('wmic logicaldisk get size,freespace,caption,filesystem');
+    const { stdout } = await execFileAsync('powershell.exe', [
+      '-NoProfile',
+      '-NonInteractive',
+      '-Command',
+      'Get-CimInstance Win32_LogicalDisk | Select-Object DeviceID,FileSystem,FreeSpace,Size | ConvertTo-Json -Compress',
+    ]);
 
-    const lines = stdout.trim().split('\n').slice(1); // 跳过标题行
+    const trimmed = stdout.trim();
+    if (!trimmed) return [];
+
+    const parsed = JSON.parse(trimmed) as PsLogicalDisk | PsLogicalDisk[];
+    const list = Array.isArray(parsed) ? parsed : [parsed];
+
     const disks: DiskInfo[] = [];
+    for (const item of list) {
+      const totalBytes = Number(item.Size ?? 0);
+      const freeBytes = Number(item.FreeSpace ?? 0);
 
-    for (const line of lines) {
-      const parts = line.trim().split(WHITESPACE_REGEX);
-      if (parts.length >= 3) {
-        const [caption, filesystem, freespace, size] = parts;
+      // 跳过无效或未就绪的盘符(如空光驱)
+      if (!totalBytes) continue;
 
-        if (size && freespace) {
-          const totalBytes = Number.parseInt(size, 10);
-          const freeBytes = Number.parseInt(freespace, 10);
-          const usedBytes = totalBytes - freeBytes;
+      const usedBytes = totalBytes - freeBytes;
 
-          disks.push({
-            dirName: caption,
-            typeName: filesystem || 'Unknown',
-            total: `${this.bytesToGB(totalBytes)}GB`,
-            used: `${this.bytesToGB(usedBytes)}GB`,
-            free: `${this.bytesToGB(freeBytes)}GB`,
-            usage: ((usedBytes / totalBytes) * 100).toFixed(2),
-          });
-        }
-      }
+      disks.push({
+        dirName: item.DeviceID,
+        typeName: item.FileSystem || 'Unknown',
+        total: `${this.bytesToGB(totalBytes)}GB`,
+        used: `${this.bytesToGB(usedBytes)}GB`,
+        free: `${this.bytesToGB(freeBytes)}GB`,
+        usage: ((usedBytes / totalBytes) * 100).toFixed(2),
+      });
     }
 
     return disks;
@@ -110,7 +121,7 @@ export class ServerService {
    * 获取 Unix/Linux/macOS 磁盘信息
    */
   private async getUnixDiskInfo(): Promise<DiskInfo[]> {
-    const { stdout } = await execPromise('df -k');
+    const { stdout } = await execFileAsync('df', ['-k']);
 
     const lines = stdout.trim().split('\n').slice(1); // 跳过标题行
     const disks: DiskInfo[] = [];
@@ -151,19 +162,6 @@ export class ServerService {
     return disks;
   }
 
-  // 获取服务器IP地址
-  getServerIP(): string | undefined {
-    const nets = networkInterfaces();
-    for (const name of Object.keys(nets)) {
-      for (const net of nets[name] ?? []) {
-        // 选择外部可访问的IPv4地址
-        if (net.family === 'IPv4' && !net.internal) {
-          return net.address;
-        }
-      }
-    }
-  }
-
   getCpuInfo() {
     const cpus = os.cpus();
     const cpuInfo = cpus.reduce<CpuStats>(
@@ -177,7 +175,7 @@ export class ServerService {
       },
       { user: 0, sys: 0, idle: 0, total: 0, cpuNum: 0 },
     );
-    const cpu = {
+    return {
       cpuNum: cpuInfo.cpuNum,
       total: cpuInfo.total,
       sys: ((cpuInfo.sys / cpuInfo.total) * 100).toFixed(2),
@@ -185,25 +183,19 @@ export class ServerService {
       wait: 0.0,
       free: ((cpuInfo.idle / cpuInfo.total) * 100).toFixed(2),
     };
-    return cpu;
   }
 
   getMemInfo() {
-    // 获取总内存
     const totalMemory = os.totalmem();
-    // 获取空闲内存
     const freeMemory = os.freemem();
-    // 已用内存 = 总内存 - 空闲内存
     const usedMemory = totalMemory - freeMemory;
-    // 使用率 = 1 - 空闲内存 / 总内存
-    const memoryUsagePercentage = (((totalMemory - freeMemory) / totalMemory) * 100).toFixed(2);
-    const mem = {
+    const memoryUsagePercentage = ((usedMemory / totalMemory) * 100).toFixed(2);
+    return {
       total: this.bytesToGB(totalMemory),
       used: this.bytesToGB(usedMemory),
       free: this.bytesToGB(freeMemory),
       usage: memoryUsagePercentage,
     };
-    return mem;
   }
 
   /**
@@ -212,9 +204,7 @@ export class ServerService {
    * @returns {string} 返回转换后的GB数，保留两位小数。
    */
   bytesToGB(bytes: number): string {
-    // 计算字节到GB的转换率
     const gb = bytes / (1024 * 1024 * 1024);
-    // 将结果四舍五入到小数点后两位
     return gb.toFixed(2);
   }
 }
