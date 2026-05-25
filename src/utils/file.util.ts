@@ -1,5 +1,6 @@
 import type { Readable } from 'node:stream';
 
+import * as crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { pipeline } from 'node:stream/promises';
@@ -21,19 +22,22 @@ export const FileTypeLabelMap: Record<FileTypeCode, string> = {
   [FileTypeCode.VIDEO]: '视频',
   [FileTypeCode.OTHER]: '其他',
 };
+
+// prettier-ignore
+const IMAGE_EXTS = new Set(['bmp', 'dib', 'pcp', 'dif', 'wmf', 'gif', 'jpg', 'tif', 'eps', 'psd', 'cdr', 'iff', 'tga', 'pcd', 'mpt', 'png', 'jpeg']);
+// prettier-ignore
+const DOCUMENT_EXTS = new Set(['txt', 'doc', 'pdf', 'ppt', 'pps', 'xlsx', 'xls', 'docx']);
+// prettier-ignore
+const MUSIC_EXTS = new Set(['mp3', 'wav', 'wma', 'mpa', 'ram', 'ra', 'aac', 'aif', 'm4a']);
+// prettier-ignore
+const VIDEO_EXTS = new Set(['avi', 'mpg', 'mpe', 'mpeg', 'asf', 'wmv', 'mov', 'qt', 'rm', 'mp4', 'flv', 'm4v', 'webm', 'ogv', 'ogg']);
+
 export function getFileType(extName: string) {
-  const documents = 'txt doc pdf ppt pps xlsx xls docx';
-  const music = 'mp3 wav wma mpa ram ra aac aif m4a';
-  const video = 'avi mpg mpe mpeg asf wmv mov qt rm mp4 flv m4v webm ogv ogg';
-  const image = 'bmp dib pcp dif wmf gif jpg tif eps psd cdr iff tga pcd mpt png jpeg';
-  if (image.includes(extName)) return FileTypeCode.IMAGE;
-
-  if (documents.includes(extName)) return FileTypeCode.DOCUMENT;
-
-  if (music.includes(extName)) return FileTypeCode.MUSIC;
-
-  if (video.includes(extName)) return FileTypeCode.VIDEO;
-
+  const ext = extName.toLowerCase();
+  if (IMAGE_EXTS.has(ext)) return FileTypeCode.IMAGE;
+  if (DOCUMENT_EXTS.has(ext)) return FileTypeCode.DOCUMENT;
+  if (MUSIC_EXTS.has(ext)) return FileTypeCode.MUSIC;
+  if (VIDEO_EXTS.has(ext)) return FileTypeCode.VIDEO;
   return FileTypeCode.OTHER;
 }
 
@@ -66,10 +70,10 @@ export function getSize(bytes: number, decimals = 2): string {
 }
 
 export function fileRename(fileName: string) {
-  const name = fileName.split('.')[0];
-  const extName = path.extname(fileName);
-  const time = dayjs().format('YYYYMMDDHHmmSSS');
-  return `${name}-${time}${extName}`;
+  const { name, ext } = path.parse(fileName);
+  const time = dayjs().format('YYYYMMDDHHmmss');
+  const rand = crypto.randomBytes(4).toString('hex');
+  return `${name}-${time}-${rand}${ext}`;
 }
 
 export function getFilePath(name: string, currentDate: string, type: FileTypeCode) {
