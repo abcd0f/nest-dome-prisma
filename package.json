@@ -11,7 +11,7 @@
     "start": "NODE_ENV=development nest start gateway",
     "start:dev": "NODE_ENV=development nest start gateway --watch",
     "start:debug": "nest start gateway --debug --watch",
-    "start:prod": "NODE_ENV=production node dist/apps/gateway/main",
+    "start:prod": "NODE_ENV=production node dist/apps/gateway/src/main",
     "start:template": "NODE_ENV=development nest start service-template --watch",
     "start:template:prod": "NODE_ENV=production node dist/apps/service-template/main",
     "db:migrate": "pnpm dlx prisma migrate dev --name init",
