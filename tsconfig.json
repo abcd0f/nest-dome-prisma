@@ -5,18 +5,48 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "baseUrl": "./",
+    "ignoreDeprecations": "6.0",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "paths": {
-      "@/*": [
-        "src/*"
+      "@nest-app/common": [
+        "libs/common/src"
+      ],
+      "@nest-app/common/*": [
+        "libs/common/src/*"
+      ],
+      "@nest-app/core": [
+        "libs/core/src"
+      ],
+      "@nest-app/core/*": [
+        "libs/core/src/*"
+      ],
+      "@nest-app/config": [
+        "libs/config/src"
+      ],
+      "@nest-app/config/*": [
+        "libs/config/src/*"
+      ],
+      "@nest-app/database": [
+        "libs/database/src"
+      ],
+      "@nest-app/database/*": [
+        "libs/database/src/*"
+      ],
+      "@nest-app/utils": [
+        "libs/utils/src"
+      ],
+      "@nest-app/utils/*": [
+        "libs/utils/src/*"
       ],
       "@orm/*": [
         "prisma/*"
       ]
     },
-    "ignoreDeprecations": "6.0",
     "resolvePackageJsonExports": true,
+    "types": [
+      "node"
+    ],
     "strictBindCallApply": false,
     "strictNullChecks": true,
     "noFallthroughCasesInSwitch": false,
@@ -35,7 +65,9 @@
   },
   "include": [
     "types/**/*.ts",
-    "src/**/*.ts"
+    "apps/**/*.ts",
+    "libs/**/*.ts",
+    "prisma.config.ts"
   ],
   "exclude": [
     "node_modules",

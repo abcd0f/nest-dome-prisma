@@ -1,0 +1,40 @@
+import { Gender, Status } from '@orm/generated/prisma/enums';
+import { IsArray, IsEnum, IsNotEmpty, IsNumber, IsObject, IsOptional, IsString } from 'class-validator';
+
+export class CreateListDto {
+  @IsString({ message: '邮箱必须是字符串' })
+  @IsNotEmpty({ message: '邮箱不能为空' })
+  email!: string;
+
+  @IsString({ message: '昵称必须是字符串' })
+  @IsNotEmpty({ message: '昵称不能为空' })
+  name!: string;
+
+  @IsEnum(Status, { message: '状态必须是 ACTIVE、INACTIVE 或 BANNED' })
+  @IsOptional()
+  status?: Status;
+
+  @IsArray({ message: '标签必须是数组' })
+  @IsOptional()
+  tags?: string[];
+
+  @IsObject({ message: 'metadata 必须是对象' })
+  @IsOptional()
+  metadata?: any;
+
+  @IsNumber({}, { message: '积分必须是数字' })
+  @IsOptional()
+  score?: number;
+
+  @IsString()
+  @IsOptional()
+  balance?: string;
+
+  @IsEnum(Gender, { message: '性别必须是 MALE、FEMALE 或 OTHER' })
+  @IsOptional()
+  gender?: Gender;
+
+  @IsString({ message: '手机号必须是字符串' })
+  @IsOptional()
+  phone?: string;
+}

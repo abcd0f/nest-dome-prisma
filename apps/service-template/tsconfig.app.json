@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "../..",
+    "declaration": true,
+    "outDir": "../../dist/apps/service-template",
+    "ignoreDeprecations": "6.0"
+  },
+  "include": ["src/**/*"]
+}

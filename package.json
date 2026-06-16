@@ -1,21 +1,24 @@
 {
-  "name": "app",
+  "name": "nest-app",
   "version": "0.0.1",
   "private": true,
   "description": "",
   "author": "",
   "license": "UNLICENSED",
   "scripts": {
-    "build": "nest build",
-    "start": "NODE_ENV=development nest start",
-    "start:dev": "NODE_ENV=development nest start --watch",
-    "start:debug": "nest start --debug --watch",
-    "start:prod": "NODE_ENV=production node dist/src/main",
+    "build": "nest build gateway",
+    "build:all": "nest build",
+    "start": "NODE_ENV=development nest start gateway",
+    "start:dev": "NODE_ENV=development nest start gateway --watch",
+    "start:debug": "nest start gateway --debug --watch",
+    "start:prod": "NODE_ENV=production node dist/apps/gateway/main",
+    "start:template": "NODE_ENV=development nest start service-template --watch",
+    "start:template:prod": "NODE_ENV=production node dist/apps/service-template/main",
     "db:migrate": "pnpm dlx prisma migrate dev --name init",
     "db:generate": "pnpm dlx prisma generate",
     "clean": "node ./scripts/clean.mjs",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-    "format": "prettier --write \"src/**/*.{ts,js}\"",
+    "format": "prettier --write \"apps/**/*.{ts,js} libs/**/*.{ts,js}\"",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
@@ -29,6 +32,7 @@
     "@nestjs/config": "^4.0.3",
     "@nestjs/core": "^11.1.17",
     "@nestjs/mapped-types": "*",
+    "@nestjs/microservices": "^11.1.27",
     "@nestjs/platform-fastify": "^11.1.17",
     "@nestjs/swagger": "^11.2.6",
     "@nestjs/throttler": "^6.5.0",
@@ -68,7 +72,7 @@
       "json",
       "ts"
     ],
-    "rootDir": "src",
+    "rootDir": "apps/gateway/src",
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
@@ -76,10 +80,11 @@
     "collectCoverageFrom": [
       "**/*.(t|j)s"
     ],
-    "coverageDirectory": "../coverage",
+    "coverageDirectory": "../../../coverage",
     "testEnvironment": "node",
     "moduleNameMapper": {
-      "^@/(.*)$": "<rootDir>/$1"
+      "^@nest-app/(.*)$": "<rootDir>/../../../libs/$1/src",
+      "^@orm/(.*)$": "<rootDir>/../../../prisma/$1"
     }
   }
 }

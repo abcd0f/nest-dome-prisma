@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "../..",
+    "declaration": true,
+    "outDir": "../../dist/apps/gateway",
+    "ignoreDeprecations": "6.0"
+  },
+  "include": ["src/**/*"]
+}

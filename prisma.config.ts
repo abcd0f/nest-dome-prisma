@@ -1,9 +1,7 @@
 import { defineConfig } from 'prisma/config';
-import { DatabaseConfig } from './src/config/database.config';
-
 import 'dotenv/config';
 
-const db = DatabaseConfig();
+const { DB_HOST, DB_PORT, DB_DATABASE, DB_USERNAME, DB_PASSWORD } = process.env;
 
 export default defineConfig({
   schema: 'prisma/schema.prisma',
@@ -11,6 +9,6 @@ export default defineConfig({
     path: 'prisma/migrations',
   },
   datasource: {
-    url: `mysql://${db.username}:${db.password}@${db.host}:${db.port}/${db.database}`,
+    url: `mysql://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_DATABASE}`,
   },
 });
