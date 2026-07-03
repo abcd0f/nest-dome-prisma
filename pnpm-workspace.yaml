@@ -1,7 +1,12 @@
-onlyBuiltDependencies:
-  - '@nestjs/core'
-  - '@prisma/client'
-  - '@prisma/engines'
-  - '@scarf/scarf'
-  - prisma
-  - unrs-resolver
+shellEmulator: true
+shamefullyHoist: true
+enablePrePostScripts: true
+strictPeerDependencies: true
+
+registry: https://registry.npmmirror.com
+
+allowBuilds:
+  '@prisma/engines': true
+  '@scarf/scarf': true
+  prisma: true
+  unrs-resolver: true
