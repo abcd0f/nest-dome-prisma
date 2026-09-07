@@ -5,4 +5,4 @@ import { FilesModule } from './files/files.module';
   imports: [FilesModule],
   exports: [FilesModule],
 })
-export class ToolsModule {}
+export class ToolModule {}

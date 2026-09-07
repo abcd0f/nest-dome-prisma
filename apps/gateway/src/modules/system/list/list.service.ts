@@ -1,6 +1,6 @@
 import { paginate, toPageDto } from '@nest-app/common';
 
-import { PrismaService } from '@nest-app/database';
+import { PrismaService } from '@nest-app/prisma';
 import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { CreateListDto } from './dto/create-list.dto';

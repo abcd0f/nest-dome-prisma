@@ -1,15 +1,13 @@
 import { ConfigurationModule } from '@nest-app/config';
-import { TimeoutInterceptor } from '@nest-app/core';
-import { PrismaModule } from '@nest-app/database';
+import { TimeoutInterceptor } from '@nest-app/framework';
+import { PrismaModule } from '@nest-app/prisma';
 import { ClassSerializerInterceptor, Module } from '@nestjs/common';
 
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
-import { HealthModule } from './modules/health/health.module';
-
-import { ListModule } from './modules/list/list.module';
+import { SystemModule } from './modules/system/system.module';
 import { MonitorModule } from './modules/monitor/monitor.module';
-import { ToolsModule } from './modules/tools/tools.module';
+import { ToolModule } from './modules/tool/tool.module';
 
 @Module({
   imports: [
@@ -23,10 +21,9 @@ import { ToolsModule } from './modules/tools/tools.module';
 
     PrismaModule,
 
-    HealthModule,
-    ListModule,
-    ToolsModule,
+    SystemModule,
     MonitorModule,
+    ToolModule,
   ],
   controllers: [],
   providers: [

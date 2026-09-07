@@ -87,7 +87,12 @@
     "coverageDirectory": "../../../coverage",
     "testEnvironment": "node",
     "moduleNameMapper": {
-      "^@nest-app/(.*)$": "<rootDir>/../../../libs/$1/src",
+      "^@nest-app/common$": "<rootDir>/../../../libs/common/src",
+      "^@nest-app/common/(.*)$": "<rootDir>/../../../libs/common/src/$1",
+      "^@nest-app/framework$": "<rootDir>/../../../libs/framework/src",
+      "^@nest-app/framework/(.*)$": "<rootDir>/../../../libs/framework/src/$1",
+      "^@nest-app/prisma$": "<rootDir>/../../../libs/prisma/src",
+      "^@nest-app/prisma/(.*)$": "<rootDir>/../../../libs/prisma/src/$1",
       "^@orm/(.*)$": "<rootDir>/../../../prisma/$1"
     }
   }

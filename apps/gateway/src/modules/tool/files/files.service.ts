@@ -1,5 +1,5 @@
 import type { Multipart, MultipartFile } from '@fastify/multipart';
-import { PrismaService } from '@nest-app/database';
+import { PrismaService } from '@nest-app/prisma';
 import { fileRename, getExtname, getFileType, getSize } from '@nest-app/utils';
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import dayjs from 'dayjs';
