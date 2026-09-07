@@ -1,12 +1,12 @@
 import { ConfigurationModule } from '@nest-app/config';
-import { TimeoutInterceptor } from '@nest-app/framework';
-import { PrismaModule } from '@nest-app/prisma';
+import { TimeoutInterceptor } from '@nest-app/core';
+import { PrismaModule } from '@nest-app/database';
 import { ClassSerializerInterceptor, Module } from '@nestjs/common';
 
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
-import { SystemModule } from './modules/system/system.module';
 import { MonitorModule } from './modules/monitor/monitor.module';
+import { SystemModule } from './modules/system/system.module';
 import { ToolModule } from './modules/tool/tool.module';
 
 @Module({

@@ -1,4 +1,4 @@
-import { PrismaService } from '@nest-app/prisma';
+import { PrismaService } from '@nest-app/database';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()

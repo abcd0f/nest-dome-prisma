@@ -47,22 +47,22 @@
         "tsConfigPath": "libs/config/tsconfig.lib.json"
       }
     },
-    "framework": {
+    "core": {
       "type": "library",
-      "root": "libs/framework",
+      "root": "libs/core",
       "entryFile": "index",
-      "sourceRoot": "libs/framework/src",
+      "sourceRoot": "libs/core/src",
       "compilerOptions": {
-        "tsConfigPath": "libs/framework/tsconfig.lib.json"
+        "tsConfigPath": "libs/core/tsconfig.lib.json"
       }
     },
-    "prisma": {
+    "database": {
       "type": "library",
-      "root": "libs/prisma",
+      "root": "libs/database",
       "entryFile": "index",
-      "sourceRoot": "libs/prisma/src",
+      "sourceRoot": "libs/database/src",
       "compilerOptions": {
-        "tsConfigPath": "libs/prisma/tsconfig.lib.json"
+        "tsConfigPath": "libs/database/tsconfig.lib.json"
       }
     },
     "utils": {

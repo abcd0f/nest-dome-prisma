@@ -3,7 +3,7 @@ import type { ConfigKeyPaths } from '@nest-app/config';
 import path from 'node:path';
 
 import { fastifyApp, PinoLogger, setFastifyApp } from '@nest-app/common';
-import { CustomValidationPipe, HttpExceptionFilter, ResponseInterceptor } from '@nest-app/framework';
+import { CustomValidationPipe, HttpExceptionFilter, ResponseInterceptor } from '@nest-app/core';
 
 import { getCorsOption, getLocalIPs } from '@nest-app/utils';
 import { ConfigService } from '@nestjs/config';

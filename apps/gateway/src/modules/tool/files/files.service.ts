@@ -1,8 +1,11 @@
 import type { Multipart, MultipartFile } from '@fastify/multipart';
-import { PrismaService } from '@nest-app/prisma';
+import { paginate, toPageDto } from '@nest-app/common';
+import { PrismaService } from '@nest-app/database';
 import { fileRename, getExtname, getFileType, getSize } from '@nest-app/utils';
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import dayjs from 'dayjs';
+import { FileQueryDto } from './dto/file-query.dto';
+import { FileResponseDto } from './dto/file-response.dto';
 import { StorageService } from './storage.service';
 
 export interface FileUploadResult {
@@ -74,7 +77,7 @@ export class FilesService {
 
   async download(id: string) {
     const asset = await this.prisma.fileAsset.findUnique({ where: { id } });
-    if (!asset || asset.deletedAt) throw new NotFoundException('文件不存在');
+    if (!asset || asset.deleteTime) throw new NotFoundException('文件不存在');
     const object = await this.storage.get(asset.objectKey);
     if (!object.Body) throw new NotFoundException('文件对象不存在');
     return { asset, body: object.Body };
@@ -82,9 +85,29 @@ export class FilesService {
 
   async remove(id: string) {
     const asset = await this.prisma.fileAsset.findUnique({ where: { id } });
-    if (!asset || asset.deletedAt) throw new NotFoundException('文件不存在');
+    if (!asset || asset.deleteTime) throw new NotFoundException('文件不存在');
     await this.storage.delete(asset.objectKey);
-    await this.prisma.fileAsset.update({ where: { id }, data: { deletedAt: new Date() } });
+    await this.prisma.fileAsset.update({ where: { id }, data: { deleteTime: new Date() } });
     return { id, deleted: true };
+  }
+
+  async findAll(query: FileQueryDto) {
+    const { page, pageSize, orderByColumn = 'createTime', isAsc, category, mimeType, originalName, bucket } = query;
+
+    const where: any = { deleteTime: null };
+
+    if (category) where.category = category;
+    if (mimeType) where.mimeType = { contains: mimeType };
+    if (originalName) where.originalName = { contains: originalName };
+    if (bucket) where.bucket = bucket;
+
+    const data = await paginate(this.prisma.fileAsset, {
+      page,
+      pageSize,
+      orderBy: { orderByColumn, isAsc },
+      where,
+    });
+
+    return toPageDto(FileResponseDto, data);
   }
 }

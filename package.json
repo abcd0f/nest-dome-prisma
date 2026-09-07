@@ -89,10 +89,10 @@
     "moduleNameMapper": {
       "^@nest-app/common$": "<rootDir>/../../../libs/common/src",
       "^@nest-app/common/(.*)$": "<rootDir>/../../../libs/common/src/$1",
-      "^@nest-app/framework$": "<rootDir>/../../../libs/framework/src",
-      "^@nest-app/framework/(.*)$": "<rootDir>/../../../libs/framework/src/$1",
-      "^@nest-app/prisma$": "<rootDir>/../../../libs/prisma/src",
-      "^@nest-app/prisma/(.*)$": "<rootDir>/../../../libs/prisma/src/$1",
+      "^@nest-app/core$": "<rootDir>/../../../libs/core/src",
+      "^@nest-app/core/(.*)$": "<rootDir>/../../../libs/core/src/$1",
+      "^@nest-app/database$": "<rootDir>/../../../libs/database/src",
+      "^@nest-app/database/(.*)$": "<rootDir>/../../../libs/database/src/$1",
       "^@orm/(.*)$": "<rootDir>/../../../prisma/$1"
     }
   }

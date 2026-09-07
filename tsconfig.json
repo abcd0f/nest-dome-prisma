@@ -15,11 +15,11 @@
       "@nest-app/common/*": [
         "libs/common/src/*"
       ],
-      "@nest-app/framework": [
-        "libs/framework/src"
+      "@nest-app/core": [
+        "libs/core/src"
       ],
-      "@nest-app/framework/*": [
-        "libs/framework/src/*"
+      "@nest-app/core/*": [
+        "libs/core/src/*"
       ],
       "@nest-app/config": [
         "libs/config/src"
@@ -27,11 +27,11 @@
       "@nest-app/config/*": [
         "libs/config/src/*"
       ],
-      "@nest-app/prisma": [
-        "libs/prisma/src"
+      "@nest-app/database": [
+        "libs/database/src"
       ],
-      "@nest-app/prisma/*": [
-        "libs/prisma/src/*"
+      "@nest-app/database/*": [
+        "libs/database/src/*"
       ],
       "@nest-app/utils": [
         "libs/utils/src"

@@ -41,21 +41,31 @@ model List {
   @@map("list")
 }
 
-/// RustFS object metadata
+/// 文件资产表 - 存储上传到 RustFS 对象存储的文件元数据
 model FileAsset {
+  /// 文件唯一标识符（CUID 格式）
   id           String    @id @default(cuid())
+  /// 存储桶名称（如 nest-app）
   bucket       String    @db.VarChar(63)
+  /// 对象存储路径（如 files/2026-09-07/image/xxx.jpg）
   objectKey    String    @unique @db.VarChar(512)
+  /// 用户上传时的原始文件名
   originalName String    @db.VarChar(255)
+  /// 文件 MIME 类型（如 image/jpeg）
   mimeType     String    @db.VarChar(255)
+  /// 文件分类（image/video/document/audio 等）
   category     String    @db.VarChar(32)
+  /// 文件大小（字节数）
   size         BigInt
+  /// 对象存储返回的 ETag 标识，用于验证完整性
   etag         String?   @db.VarChar(255)
-  createdAt    DateTime  @default(now()) @db.DateTime(0)
-  deletedAt    DateTime? @db.DateTime(0)
+  /// 文件上传时间
+  createTime   DateTime  @default(now()) @db.DateTime(0)
+  /// 软删除时间（null 表示未删除）
+  deleteTime   DateTime? @db.DateTime(0)
 
-  @@index([bucket, createdAt])
-  @@index([deletedAt])
+  @@index([bucket, createTime])
+  @@index([deleteTime])
   @@map("file_asset")
 }
 

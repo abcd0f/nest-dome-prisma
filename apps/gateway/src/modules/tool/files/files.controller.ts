@@ -1,5 +1,6 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
-import { BadRequestException, Controller, Delete, Get, Param, Post, Req, Res } from '@nestjs/common';
+import { BadRequestException, Controller, Delete, Get, Param, Post, Query, Req, Res } from '@nestjs/common';
+import { FileQueryDto } from './dto/file-query.dto';
 import { FilesService } from './files.service';
 
 @Controller('files')
@@ -16,6 +17,11 @@ export class FilesController {
   @Post('batch')
   async uploadBatch(@Req() req: FastifyRequest) {
     return { data: await this.files.uploadBatch(req.parts()), msg: '上传成功' };
+  }
+
+  @Get()
+  async list(@Query() query: FileQueryDto) {
+    return this.files.findAll(query);
   }
 
   @Get(':id')
