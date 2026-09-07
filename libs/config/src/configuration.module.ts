@@ -3,9 +3,10 @@ import { ConfigModule as NestConfigModule } from '@nestjs/config';
 import { AppConfig } from './app.config';
 import { DatabaseConfig } from './database.config';
 import { FileConfig } from './file.config';
+import { RedisConfig } from './redis.config';
 import { SwaggerConfig } from './swagger.config';
 
-export const configLoaders = [AppConfig, DatabaseConfig, FileConfig, SwaggerConfig] as const;
+export const configLoaders = [AppConfig, DatabaseConfig, FileConfig, RedisConfig, SwaggerConfig] as const;
 
 /** Shared configuration boundary for the monolithic application. */
 @Global()

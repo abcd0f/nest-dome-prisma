@@ -9,44 +9,22 @@
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "paths": {
-      "@nest-app/common": [
-        "libs/common/src"
-      ],
-      "@nest-app/common/*": [
-        "libs/common/src/*"
-      ],
-      "@nest-app/core": [
-        "libs/core/src"
-      ],
-      "@nest-app/core/*": [
-        "libs/core/src/*"
-      ],
-      "@nest-app/config": [
-        "libs/config/src"
-      ],
-      "@nest-app/config/*": [
-        "libs/config/src/*"
-      ],
-      "@nest-app/database": [
-        "libs/database/src"
-      ],
-      "@nest-app/database/*": [
-        "libs/database/src/*"
-      ],
-      "@nest-app/utils": [
-        "libs/utils/src"
-      ],
-      "@nest-app/utils/*": [
-        "libs/utils/src/*"
-      ],
-      "@orm/*": [
-        "prisma/*"
-      ]
+      "@nest-app/common": ["libs/common/src"],
+      "@nest-app/common/*": ["libs/common/src/*"],
+      "@nest-app/core": ["libs/core/src"],
+      "@nest-app/core/*": ["libs/core/src/*"],
+      "@nest-app/config": ["libs/config/src"],
+      "@nest-app/config/*": ["libs/config/src/*"],
+      "@nest-app/database": ["libs/database/src"],
+      "@nest-app/database/*": ["libs/database/src/*"],
+      "@nest-app/utils": ["libs/utils/src"],
+      "@nest-app/utils/*": ["libs/utils/src/*"],
+      "@nest-app/redis": ["libs/redis/src"],
+      "@nest-app/redis/*": ["libs/redis/src/*"],
+      "@orm/*": ["prisma/*"]
     },
     "resolvePackageJsonExports": true,
-    "types": [
-      "node"
-    ],
+    "types": ["node"],
     "strictBindCallApply": false,
     "strictNullChecks": true,
     "noFallthroughCasesInSwitch": false,
@@ -63,14 +41,6 @@
     "isolatedModules": true,
     "skipLibCheck": true
   },
-  "include": [
-    "types/**/*.ts",
-    "apps/**/*.ts",
-    "libs/**/*.ts",
-    "prisma.config.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+  "include": ["types/**/*.ts", "apps/**/*.ts", "libs/**/*.ts", "prisma.config.ts"],
+  "exclude": ["node_modules", "dist"]
 }

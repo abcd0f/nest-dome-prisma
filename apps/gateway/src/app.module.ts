@@ -1,6 +1,7 @@
 import { ConfigurationModule } from '@nest-app/config';
 import { TimeoutInterceptor } from '@nest-app/core';
 import { PrismaModule } from '@nest-app/database';
+import { RedisModule } from '@nest-app/redis';
 import { ClassSerializerInterceptor, Module } from '@nestjs/common';
 
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
@@ -20,6 +21,7 @@ import { ToolModule } from './modules/tool/tool.module';
     ]),
 
     PrismaModule,
+    RedisModule,
 
     SystemModule,
     MonitorModule,
