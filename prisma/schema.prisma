@@ -110,6 +110,33 @@ model OperationLog {
   @@map("operation_log")
 }
 
+/// 用户表
+model User {
+  /// 自增主键
+  id         Int       @id @default(autoincrement())
+  /// 登录用户名（登录功能暂未启用）
+  username   String    @unique @db.VarChar(64)
+  /// 用户昵称
+  nickname   String?   @db.VarChar(128)
+  /// 邮箱
+  email      String?   @unique @db.VarChar(191)
+  /// 手机号
+  phone      String?   @unique @db.VarChar(20)
+  /// 用户状态
+  status     Status    @default(ACTIVE)
+  /// 备注
+  remark     String?   @db.VarChar(255)
+  /// 创建时间
+  createTime DateTime  @default(now()) @db.DateTime(0)
+  /// 更新时间
+  updateTime DateTime? @updatedAt @db.DateTime(0)
+  /// 软删除标记
+  deleted    Boolean   @default(false)
+
+  @@index([status, deleted])
+  @@map("user")
+}
+
 /// 状态枚举
 enum Status {
   ACTIVE
