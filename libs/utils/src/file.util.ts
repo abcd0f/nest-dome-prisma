@@ -1,9 +1,5 @@
-import type { Readable } from 'node:stream';
-
 import * as crypto from 'node:crypto';
-import fs from 'node:fs';
 import path from 'node:path';
-import { pipeline } from 'node:stream/promises';
 
 import dayjs from 'dayjs';
 
@@ -94,94 +90,4 @@ export function fileRename(fileName: string) {
   const time = dayjs().format('YYYYMMDDHHmmss');
   const rand = crypto.randomBytes(4).toString('hex');
   return `${name}-${time}-${rand}${ext}`;
-}
-
-export function getFilePath(name: string, currentDate: string, type: FileTypeCode) {
-  return `/upload/${currentDate}/${type}/${name}`;
-}
-
-export async function saveLocalFileByStream(
-  stream: Readable,
-  name: string,
-  currentDate: string,
-  type: FileTypeCode,
-): Promise<{ size: number; truncated: boolean }> {
-  const safeName = path.basename(name);
-  const dirPath = path.resolve(process.cwd(), 'public', 'upload', currentDate, type);
-  await fs.promises.mkdir(dirPath, { recursive: true });
-
-  const fullPath = path.join(dirPath, safeName);
-
-  let size = 0;
-  let truncated = false;
-
-  stream.on('data', (chunk: Buffer) => {
-    size += chunk.length;
-  });
-
-  stream.on('limit', () => {
-    truncated = true;
-  });
-
-  try {
-    await pipeline(stream, fs.createWriteStream(fullPath));
-
-    if (truncated) {
-      await fs.promises.unlink(fullPath);
-    }
-
-    return { size, truncated };
-  } catch (error) {
-    try {
-      await fs.promises.unlink(fullPath);
-    } catch {}
-    throw error;
-  }
-}
-
-export async function deleteFile(name: string): Promise<boolean> {
-  const filePath = path.resolve(process.cwd(), 'public', name);
-
-  try {
-    await fs.promises.access(filePath, fs.constants.F_OK);
-    await fs.promises.unlink(filePath);
-    return true;
-  } catch (error) {
-    console.error('删除文件失败:', filePath, error);
-    return false;
-  }
-}
-
-export async function deleteFiles(names: string[]): Promise<{
-  success: string[];
-  failed: string[];
-}> {
-  const success: string[] = [];
-  const failed: string[] = [];
-
-  await Promise.all(
-    names.map(async (name) => {
-      const result = await deleteFile(name);
-      if (result) {
-        success.push(name);
-      } else {
-        failed.push(name);
-      }
-    }),
-  );
-
-  return { success, failed };
-}
-
-export async function deleteDirectory(dirPath: string): Promise<number> {
-  const fullPath = path.resolve(process.cwd(), 'public', dirPath);
-
-  try {
-    await fs.promises.access(fullPath, fs.constants.F_OK);
-    await fs.promises.rm(fullPath, { recursive: true, force: true });
-    return 1;
-  } catch (error) {
-    console.error('删除目录失败:', fullPath, error);
-    return 0;
-  }
 }

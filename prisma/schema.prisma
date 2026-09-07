@@ -41,6 +41,24 @@ model List {
   @@map("list")
 }
 
+/// RustFS object metadata
+model FileAsset {
+  id           String    @id @default(cuid())
+  bucket       String    @db.VarChar(63)
+  objectKey    String    @unique @db.VarChar(512)
+  originalName String    @db.VarChar(255)
+  mimeType     String    @db.VarChar(255)
+  category     String    @db.VarChar(32)
+  size         BigInt
+  etag         String?   @db.VarChar(255)
+  createdAt    DateTime  @default(now()) @db.DateTime(0)
+  deletedAt    DateTime? @db.DateTime(0)
+
+  @@index([bucket, createdAt])
+  @@index([deletedAt])
+  @@map("file_asset")
+}
+
 /// 状态枚举
 enum Status {
   ACTIVE

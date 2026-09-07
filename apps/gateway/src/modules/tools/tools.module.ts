@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { UploadModule } from './upload/upload.module';
+import { FilesModule } from './files/files.module';
 
 @Module({
-  imports: [UploadModule],
-  exports: [UploadModule],
+  imports: [FilesModule],
+  exports: [FilesModule],
 })
 export class ToolsModule {}

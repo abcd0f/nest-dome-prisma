@@ -89,11 +89,12 @@ pnpm build && pnpm start:prod
 │   ├── modules/                    # 业务模块
 │   │   ├── list/                   # 列表 CRUD
 │   │   ├── monitor/                # 监控模块
-│   │   └── tools/                  # 工具模块 (上传)
+│   │   └── tools/                  # 工具模块 (RustFS 文件管理)
 │   ├── utils/                      # 工具函数
 │   ├── app.module.ts               # 根模块
 │   └── main.ts                     # 入口文件
-├── uploads/                        # 上传文件目录
+├── scripts/rustfs/                 # RustFS Docker Compose 与启动脚本
+├── public/file-manager.html        # RustFS 文件管理前端示例
 ├── logs/                           # 日志目录
 ├── .env                            # 环境变量
 ├── package.json                    # 项目依赖
@@ -124,7 +125,7 @@ pnpm format             # 代码格式化
 | 模块    | 路径         | 描述           |
 | ------- | ------------ | -------------- |
 | List    | /api/list    | 基础 CRUD 示例 |
-| Tools   | /api/tools   | 文件上传等工具 |
+| Files   | /api/files   | RustFS 文件上传、下载、删除 |
 | Monitor | /api/monitor | 服务器监控     |
 
 ## Prisma 命令
@@ -195,6 +196,23 @@ nest g pi <name>        # 管道
 - **VS Code 插件**: Prisma, ESLint, Prettier
 
 ### 相关文档
+
+### RustFS
+
+```bash
+# 在根目录 .env.development 中配置开发环境 RustFS 密钥
+pnpm rustfs:dev
+# 生产环境
+pnpm rustfs:prod
+# 查看状态、日志、停止服务
+pnpm rustfs:status
+pnpm rustfs:logs
+pnpm rustfs:down
+# 通用入口：参数会透传给 Docker Compose
+pnpm rustfs -- --environment production up -d
+```
+
+RustFS 命令由 `package.json` 统一暴露，跨平台入口是 `scripts/rustfs/start-rustfs.mjs`，不依赖 Bash 或 PowerShell。脚本根据 `NODE_ENV` 或 `--environment` 读取根目录 `.env.<环境>`，不存在时回退到根目录 `.env`；不传 Docker Compose 参数时默认执行 `up -d`。NestJS 应用使用相同的环境选择规则。开发和生产环境可以使用不同的 RustFS 凭据、Bucket 和 Endpoint，`scripts/rustfs` 下不保存环境文件。RustFS S3 API 默认监听 `127.0.0.1:9000`，控制台监听 `127.0.0.1:9001`。前端示例位于 `public/file-manager.html`，页面会自动探测 `/api` 或 `/dev` 前缀，应用启动后可通过 `http://localhost:8848/file-manager.html` 访问。
 
 - [NestJS 官方文档](https://docs.nestjs.com/)
 - [Prisma 官方文档](https://www.prisma.io/docs/)

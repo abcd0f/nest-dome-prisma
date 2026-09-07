@@ -3,7 +3,6 @@
 /node_modules
 /build
 /prisma/generated
-/prisma/migrations
 /log
 /logs
 /public/upload
