@@ -120,20 +120,17 @@ import { User } from '@orm/generated/prisma/client';
 
 ```
 ├── apps/                    # 应用目录（Monorepo）
-│   ├── gateway/            # 主应用（API 网关）
+│   ├── gateway/            # 唯一单体应用（HTTP API）
 │   │   └── src/
 │   │       ├── main.ts     # 应用入口
 │   │       ├── app.module.ts # 根模块
 │   │       ├── modules/    # 业务模块
-│   │       └── shared/     # 共享组件
-│   └── service-template/   # 服务模板应用
 ├── libs/                    # 共享库（Monorepo）
 │   ├── common/             # 公共组件（适配器、DTO、日志、类型、工具）
 │   ├── config/             # 配置管理
 │   ├── core/               # 核心功能（装饰器、过滤器、守卫、拦截器、管道）
 │   ├── database/           # 数据库相关
-│   ├── utils/              # 工具函数
-│   └── ws/                 # WebSocket 相关
+│   └── utils/              # 工具函数
 ├── prisma/                  # Prisma 数据库
 │   ├── schema.prisma       # 数据库模型定义
 │   ├── migrations/         # 数据库迁移

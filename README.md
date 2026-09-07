@@ -39,7 +39,11 @@ API_PREFIX=/api
 APP_RES_MODE=normal
 
 # 数据库
-DATABASE_URL=mysql://user:password@localhost:3306/dbname
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=dbname
+DB_USERNAME=user
+DB_PASSWORD=password
 
 # 日志
 LOGGER_LEVEL=info
@@ -65,34 +69,20 @@ pnpm build && pnpm start:prod
 ## 项目结构
 
 ```
+├── apps/gateway/                   # 唯一单体应用入口与业务模块
+│   └── src/
+│       ├── main.ts                 # HTTP 启动入口
+│       ├── app.module.ts           # 根模块与依赖装配
+│       └── modules/                # health/list/files/monitor 业务模块
+├── libs/                           # 可复用基础设施库
+│   ├── common/                     # DTO、类型、日志、适配器
+│   ├── config/                     # 集中式配置模块与配置定义
+│   ├── core/                       # 管道、拦截器、过滤器、守卫
+│   ├── database/                   # Prisma 服务与模块
+│   └── utils/                      # 无状态工具函数
 ├── prisma/                         # Prisma 配置与迁移
 │   ├── schema.prisma               # 数据模型定义
 │   └── generated/                  # 生成的 Client 代码
-├── src/                            # 应用源代码
-│   ├── config/                     # 配置文件
-│   │   ├── app.config.ts           # 应用配置
-│   │   ├── file.config.ts          # 文件配置
-│   │   └── swagger.config.ts       # Swagger 配置
-│   ├── common/                     # 公共模块
-│   │   ├── adapters/               # 适配器 (Fastify)
-│   │   ├── dto/                    # DTO 基类
-│   │   ├── logger/                 # 日志 (Pino)
-│   │   ├── types/                  # 类型定义
-│   │   └── utils/                  # 工具函数
-│   ├── core/                       # 核心模块
-│   │   ├── decorators/             # 自定义装饰器
-│   │   ├── filters/                # 异常过滤器
-│   │   ├── guards/                 # 守卫
-│   │   ├── interceptors/           # 拦截器
-│   │   └── pipes/                  # 管道
-│   ├── database/                   # Prisma 服务
-│   ├── modules/                    # 业务模块
-│   │   ├── list/                   # 列表 CRUD
-│   │   ├── monitor/                # 监控模块
-│   │   └── tools/                  # 工具模块 (RustFS 文件管理)
-│   ├── utils/                      # 工具函数
-│   ├── app.module.ts               # 根模块
-│   └── main.ts                     # 入口文件
 ├── scripts/rustfs/                 # RustFS Docker Compose 与启动脚本
 ├── public/file-manager.html        # RustFS 文件管理前端示例
 ├── logs/                           # 日志目录

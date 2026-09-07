@@ -29,15 +29,6 @@
         "tsConfigPath": "apps/gateway/tsconfig.app.json"
       }
     },
-    "service-template": {
-      "type": "application",
-      "root": "apps/service-template",
-      "entryFile": "main",
-      "sourceRoot": "apps/service-template/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/service-template/tsconfig.app.json"
-      }
-    },
     "common": {
       "type": "library",
       "root": "libs/common",

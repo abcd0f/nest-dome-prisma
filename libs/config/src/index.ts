@@ -4,6 +4,7 @@ import { FileConfig, fileRegToken, IFileConfig } from './file.config';
 import { ISwaggerConfig, SwaggerConfig, swaggerRegToken } from './swagger.config';
 
 export * from './app.config';
+export * from './configuration.module';
 export * from './database.config';
 export * from './file.config';
 export * from './swagger.config';

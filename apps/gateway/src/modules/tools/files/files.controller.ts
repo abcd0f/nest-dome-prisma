@@ -15,13 +15,7 @@ export class FilesController {
 
   @Post('batch')
   async uploadBatch(@Req() req: FastifyRequest) {
-    const results: Awaited<ReturnType<FilesService['upload']>>[] = [];
-    for await (const part of req.parts()) {
-      if (part.type !== 'file') continue;
-      results.push(await this.files.upload(part));
-    }
-    if (results.length === 0) throw new BadRequestException('未检测到上传文件');
-    return { data: results, msg: '上传成功' };
+    return { data: await this.files.uploadBatch(req.parts()), msg: '上传成功' };
   }
 
   @Get(':id')

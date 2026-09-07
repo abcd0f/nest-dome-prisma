@@ -1,6 +1,6 @@
-import { DateFormat } from '@nest-app/core';
 import { Expose, Transform, Type } from 'class-transformer';
 import { IsEnum, IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
+import { DateFormat } from '../decorators';
 
 export enum SortOrder {
   ASC = 'asc',

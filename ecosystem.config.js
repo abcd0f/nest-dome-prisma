@@ -9,8 +9,12 @@ module.exports = {
       // ========== 基础配置 ==========
       name: 'nest_admin_server', // 应用名称（用于 pm2 命令识别）
       namespace: 'nest_admin_server', // 命名空间（用于分组管理）
-      script: 'src/main.js', // 启动文件（编译后的入口文件在 dist/src 下）
+      cwd: __dirname,
+      script: 'dist/apps/gateway/src/main.js', // 单体应用编译后的唯一入口
       args: '', // 传递给脚本的参数
+      env: {
+        NODE_ENV: 'production',
+      },
 
       // ========== 运行模式 ==========
       exec_mode: 'fork', // 执行模式：fork（单实例）或 cluster（集群模式，充分利用多核 CPU）

@@ -1,4 +1,4 @@
-import type { PageResult, PaginationParams } from '@nest-app/common';
+import type { PageResult, PaginationParams } from '../types/page';
 
 interface FindManyDelegate<T> {
   findMany: (...args: any[]) => Promise<T[]>;

@@ -1,9 +1,20 @@
-import type { MultipartFile } from '@fastify/multipart';
+import type { Multipart, MultipartFile } from '@fastify/multipart';
 import { PrismaService } from '@nest-app/database';
 import { fileRename, getExtname, getFileType, getSize } from '@nest-app/utils';
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import dayjs from 'dayjs';
 import { StorageService } from './storage.service';
+
+export interface FileUploadResult {
+  id: string;
+  fileName: string;
+  name: string;
+  objectKey: string;
+  type: string;
+  mimeType: string;
+  size: string;
+  currentDate: string;
+}
 
 @Injectable()
 export class FilesService {
@@ -12,7 +23,7 @@ export class FilesService {
     private readonly storage: StorageService,
   ) {}
 
-  async upload(file: MultipartFile) {
+  async upload(file: MultipartFile): Promise<FileUploadResult> {
     const originalName = file.filename;
     const type = getFileType(getExtname(originalName));
     const generatedName = fileRename(originalName);
@@ -48,6 +59,17 @@ export class FilesService {
     } catch (error) {
       throw new BadRequestException('文件上传到 RustFS 失败', { cause: error });
     }
+  }
+
+  async uploadBatch(parts: AsyncIterable<Multipart>): Promise<FileUploadResult[]> {
+    const results: FileUploadResult[] = [];
+    for await (const part of parts) {
+      if (part.type !== 'file') continue;
+      results.push(await this.upload(part));
+    }
+
+    if (results.length === 0) throw new BadRequestException('未检测到上传文件');
+    return results;
   }
 
   async download(id: string) {
